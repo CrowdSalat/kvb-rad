@@ -1,5 +1,9 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Arrays;
+
 public class Place {
     private long uid;
     private double lat;
@@ -17,7 +21,7 @@ public class Place {
     private long freeSpecialRacks;
     private boolean maintenance;
     private TerminalType terminalType;
-    private Bike[] bike;
+    private Bike[] bikeList;
     private String[] bikeNumbers;
     private PlaceBikeTypes bikeTypes;
     private String placeType;
@@ -71,8 +75,8 @@ public class Place {
     public TerminalType getTerminalType() { return terminalType; }
     public void setTerminalType(TerminalType value) { this.terminalType = value; }
 
-    public Bike[] getBike() { return bike; }
-    public void setBike(Bike[] value) { this.bike = value; }
+    public Bike[] getBikeList() { return bikeList; }
+    public void setBikeList(Bike[] value) { this.bikeList = value; }
 
     public String[] getBikeNumbers() { return bikeNumbers; }
     public void setBikeNumbers(String[] value) { this.bikeNumbers = value; }
@@ -85,4 +89,31 @@ public class Place {
 
     public boolean getRackLocks() { return rackLocks; }
     public void setRackLocks(boolean value) { this.rackLocks = value; }
+
+    @Override
+    public String toString() {
+        return "Place{" +
+                "uid=" + uid +
+                ", lat=" + lat +
+                ", lng=" + lng +
+                ", bike=" + bike +
+                ", name='" + name + '\'' +
+                ", address=" + address +
+                ", spot=" + spot +
+                ", number=" + number +
+                ", bikes=" + bikes +
+                ", bookedBikes=" + bookedBikes +
+                ", bikeRacks=" + bikeRacks +
+                ", freeRacks=" + freeRacks +
+                ", specialRacks=" + specialRacks +
+                ", freeSpecialRacks=" + freeSpecialRacks +
+                ", maintenance=" + maintenance +
+                ", terminalType=" + terminalType +
+                ", bikeList=" + Arrays.toString(bikeList) +
+                ", bikeNumbers=" + Arrays.toString(bikeNumbers) +
+                ", bikeTypes=" + bikeTypes +
+                ", placeType='" + placeType + '\'' +
+                ", rackLocks=" + rackLocks +
+                '}';
+    }
 }

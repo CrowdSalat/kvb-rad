@@ -9,4 +9,12 @@ public class NorthEast {
 
     public double getLng() { return lng; }
     public void setLng(double value) { this.lng = value; }
+
+    @Override
+    public String toString() {
+        return "NorthEast{" +
+                "lat=" + lat +
+                ", lng=" + lng +
+                '}';
+    }
 }

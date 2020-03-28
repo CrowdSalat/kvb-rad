@@ -9,4 +9,12 @@ public class Bounds {
 
     public NorthEast getNorthEast() { return northEast; }
     public void setNorthEast(NorthEast value) { this.northEast = value; }
+
+    @Override
+    public String toString() {
+        return "Bounds{" +
+                "southWest=" + southWest +
+                ", northEast=" + northEast +
+                '}';
+    }
 }

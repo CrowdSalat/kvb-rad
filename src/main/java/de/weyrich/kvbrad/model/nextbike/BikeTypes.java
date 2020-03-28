@@ -17,4 +17,14 @@ public class BikeTypes {
 
     public long getUndefined() { return undefined; }
     public void setUndefined(long value) { this.undefined = value; }
+
+    @Override
+    public String toString() {
+        return "BikeTypes{" +
+                "the14=" + the14 +
+                ", the15=" + the15 +
+                ", the17=" + the17 +
+                ", undefined=" + undefined +
+                '}';
+    }
 }

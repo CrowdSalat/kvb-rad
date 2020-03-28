@@ -1,5 +1,7 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+import java.util.Arrays;
+
 public class Country {
     private double lat;
     private double lng;
@@ -109,4 +111,37 @@ public class Country {
 
     public City[] getCities() { return cities; }
     public void setCities(City[] value) { this.cities = value; }
+
+    @Override
+    public String toString() {
+        return "Country{" +
+                "lat=" + lat +
+                ", lng=" + lng +
+                ", zoom=" + zoom +
+                ", name='" + name + '\'' +
+                ", hotline='" + hotline + '\'' +
+                ", domain='" + domain + '\'' +
+                ", language='" + language + '\'' +
+                ", email='" + email + '\'' +
+                ", timezone='" + timezone + '\'' +
+                ", currency='" + currency + '\'' +
+                ", countryCallingCode='" + countryCallingCode + '\'' +
+                ", systemOperatorAddress='" + systemOperatorAddress + '\'' +
+                ", country='" + country + '\'' +
+                ", countryName='" + countryName + '\'' +
+                ", terms='" + terms + '\'' +
+                ", policy='" + policy + '\'' +
+                ", website='" + website + '\'' +
+                ", showBikeTypes=" + showBikeTypes +
+                ", showBikeTypeGroups=" + showBikeTypeGroups +
+                ", showFreeRacks=" + showFreeRacks +
+                ", bookedBikes=" + bookedBikes +
+                ", setPointBikes=" + setPointBikes +
+                ", availableBikes=" + availableBikes +
+                ", cappedAvailableBikes=" + cappedAvailableBikes +
+                ", noRegistration=" + noRegistration +
+                ", pricing='" + pricing + '\'' +
+                ", cities=" + Arrays.toString(cities) +
+                '}';
+    }
 }

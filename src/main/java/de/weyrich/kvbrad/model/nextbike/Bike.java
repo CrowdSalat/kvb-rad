@@ -1,5 +1,7 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+import java.util.Arrays;
+
 public class Bike {
     private String number;
     private long bikeType;
@@ -37,4 +39,20 @@ public class Bike {
 
     public Object getBatteryPack() { return batteryPack; }
     public void setBatteryPack(Object value) { this.batteryPack = value; }
+
+    @Override
+    public String
+    toString() {
+        return "Bike{" +
+                "number='" + number + '\'' +
+                ", bikeType=" + bikeType +
+                ", lockTypes=" + Arrays.toString(lockTypes) +
+                ", active=" + active +
+                ", state=" + state +
+                ", electricLock=" + electricLock +
+                ", boardcomputer=" + boardcomputer +
+                ", pedelecBattery=" + pedelecBattery +
+                ", batteryPack=" + batteryPack +
+                '}';
+    }
 }

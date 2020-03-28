@@ -1,5 +1,6 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+//TODO merge with BikeTypes
 public class PlaceBikeTypes {
     private Long the15;
     private Long undefined;
@@ -9,4 +10,12 @@ public class PlaceBikeTypes {
 
     public Long getUndefined() { return undefined; }
     public void setUndefined(Long value) { this.undefined = value; }
+
+    @Override
+    public String toString() {
+        return "PlaceBikeTypes{" +
+                "the15=" + the15 +
+                ", undefined=" + undefined +
+                '}';
+    }
 }

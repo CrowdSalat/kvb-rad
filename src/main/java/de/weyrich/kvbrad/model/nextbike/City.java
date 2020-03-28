@@ -1,5 +1,7 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+import java.util.Arrays;
+
 public class City {
     private long uid;
     private double lat;
@@ -73,4 +75,28 @@ public class City {
 
     public Place[] getPlaces() { return places; }
     public void setPlaces(Place[] value) { this.places = value; }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "uid=" + uid +
+                ", lat=" + lat +
+                ", lng=" + lng +
+                ", zoom=" + zoom +
+                ", mapsIcon='" + mapsIcon + '\'' +
+                ", alias='" + alias + '\'' +
+                ", cityBreak=" + cityBreak +
+                ", name='" + name + '\'' +
+                ", numPlaces=" + numPlaces +
+                ", refreshRate='" + refreshRate + '\'' +
+                ", bounds=" + bounds +
+                ", bookedBikes=" + bookedBikes +
+                ", setPointBikes=" + setPointBikes +
+                ", availableBikes=" + availableBikes +
+                ", returnToOfficialOnly=" + returnToOfficialOnly +
+                ", bikeTypes=" + bikeTypes +
+                ", website='" + website + '\'' +
+                ", places=" + Arrays.toString(places) +
+                '}';
+    }
 }
