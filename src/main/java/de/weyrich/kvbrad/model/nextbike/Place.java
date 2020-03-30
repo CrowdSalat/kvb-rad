@@ -21,7 +21,9 @@ public class Place {
     private long freeSpecialRacks;
     private boolean maintenance;
     private TerminalType terminalType;
+    @JsonProperty("bike_list")
     private Bike[] bikeList;
+    @JsonProperty("bike_numbers")
     private String[] bikeNumbers;
     private PlaceBikeTypes bikeTypes;
     private String placeType;
