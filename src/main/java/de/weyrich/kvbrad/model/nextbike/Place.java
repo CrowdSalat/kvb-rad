@@ -1,9 +1,11 @@
 package de.weyrich.kvbrad.model.nextbike;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.Arrays;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Place {
     private long uid;
     private double lat;
@@ -21,9 +23,7 @@ public class Place {
     private long freeSpecialRacks;
     private boolean maintenance;
     private TerminalType terminalType;
-    @JsonProperty("bike_list")
     private Bike[] bikeList;
-    @JsonProperty("bike_numbers")
     private String[] bikeNumbers;
     private PlaceBikeTypes bikeTypes;
     private String placeType;

@@ -1,7 +1,11 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import java.util.Arrays;
 
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Bike {
     private String number;
     private long bikeType;
