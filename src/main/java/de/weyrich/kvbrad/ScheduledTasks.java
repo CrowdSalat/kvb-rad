@@ -1,7 +1,10 @@
 package de.weyrich.kvbrad;
 
 
+import de.weyrich.kvbrad.model.nextbike.Bike;
+import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
+import de.weyrich.kvbrad.repository.BikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -11,20 +14,36 @@ import org.springframework.web.client.RestTemplate;
 public class ScheduledTasks {
 
     private final RestTemplate restTemplate;
+    private final BikeRepository bikeRepository;
 
     @Autowired
-    public ScheduledTasks(RestTemplate restTemplate) {
+    public ScheduledTasks(RestTemplate restTemplate, BikeRepository bikeRepository) {
         this.restTemplate = restTemplate;
+        this.bikeRepository = bikeRepository;
     }
 
     @Scheduled(cron = "* * * * * *")
     public void scheduleDownloadBikeData() {
+        System.out.println("############ download");
         RootModel rootModel = this.downloadBikeDate();
-        System.out.println(rootModel);
+        this.saveToDatabase(rootModel);
     }
 
     public RootModel downloadBikeDate() {
         String url = "https://api.nextbike.net/maps/nextbike-official.json?city=14";
         return this.restTemplate.getForObject(url, RootModel.class);
+    }
+
+    public void saveToDatabase(RootModel rootModel) {
+        final Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
+        for (Place place : places) {
+            final Bike[] bikeList = place.getBikeList();
+            final double lat = place.getLat();
+            final double lng = place.getLng();
+            if (bikeList.length > 1) {
+                final de.weyrich.kvbrad.model.jpa.Bike bike = new de.weyrich.kvbrad.model.jpa.Bike(bikeList[0].getNumber(), lat, lng);
+                bikeRepository.save(bike);
+            }
+        }
     }
 }

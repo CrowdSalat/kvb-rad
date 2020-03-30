@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.repository.BikeRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,22 @@ public class TestJsonBikeRepository {
         assertEquals(EXPECTED_ID, save.getId());
         assertEquals(EXTECTED_LAT, save.getLat());
         assertEquals(EXTECTED_LNG, save.getLng());
+    }
+
+    @Test
+    public void testSaveToDatabase() throws InterruptedException {
+        Thread.sleep(1000);
+        final Iterable<Bike> all = repository.findAll();
+
+        int count = 0;
+        for (Bike bike : all) {
+            count++;
+            assertNotNull(bike.getId());
+            assertNotNull(bike.getLat());
+            assertNotNull(bike.getLng());
+        }
+        assertTrue(count > 2);
+
     }
 
 }
