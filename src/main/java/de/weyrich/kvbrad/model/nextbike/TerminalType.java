@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.IOException;
 
 public enum TerminalType {
-    CHARACTER, FREE, STELE;
+    CHARACTER, FREE, STELE, UNDEFINED;
 
     @JsonValue
     public String toValue() {
@@ -23,6 +23,7 @@ public enum TerminalType {
         if (value.equals("character")) return CHARACTER;
         if (value.equals("free")) return FREE;
         if (value.equals("stele")) return STELE;
+        if (value.equals("")) return UNDEFINED;
         throw new IOException("Cannot deserialize TerminalType");
     }
 }
