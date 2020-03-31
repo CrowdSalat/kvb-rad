@@ -5,6 +5,8 @@ import de.weyrich.kvbrad.model.nextbike.Bike;
 import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
 import de.weyrich.kvbrad.repository.BikeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class ScheduledTasks {
+
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
     private final RestTemplate restTemplate;
     private final BikeRepository bikeRepository;
@@ -24,7 +28,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "* * * * * *")
     public void scheduleDownloadBikeData() {
-        System.out.println("############ download");
+        logger.debug("download");
         RootModel rootModel = this.downloadBikeDate();
         this.saveToDatabase(rootModel);
     }
