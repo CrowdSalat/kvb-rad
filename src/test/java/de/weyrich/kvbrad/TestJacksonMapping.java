@@ -1,6 +1,8 @@
 package de.weyrich.kvbrad;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
 import de.weyrich.kvbrad.model.nextbike.City;
 import de.weyrich.kvbrad.model.nextbike.Country;
@@ -17,7 +19,7 @@ class TestJacksonMapping {
     private ScheduledTasks scheduledTasks;
 
     @Test
-    void contextLoads() {
+    void downloadBikeData_shouldReturnAllFields() {
         final RootModel model = scheduledTasks.downloadBikeDate();
         final Country[] countries = model.getCountries();
         assertNotNull(countries);
@@ -30,13 +32,15 @@ class TestJacksonMapping {
         final Place[] places = city.getPlaces();
         assertNotNull(places);
 
+        int count = 0;
         for (Place place : places) {
             assertNotNull(places);
             assertNotNull(place.getBikeList());
             assertNotNull(place.getBikeNumbers());
+            count++;
         }
 
-
+        assertThat(count, is(greaterThan(300)));
     }
 
 }
