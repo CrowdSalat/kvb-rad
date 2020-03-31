@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import java.util.Arrays;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-public class Bike {
+public class JsonBike {
     private String number;
     private long bikeType;
     private LockType[] lockTypes;

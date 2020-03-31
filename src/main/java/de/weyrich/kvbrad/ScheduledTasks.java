@@ -1,7 +1,7 @@
 package de.weyrich.kvbrad;
 
-
-import de.weyrich.kvbrad.model.nextbike.Bike;
+import de.weyrich.kvbrad.model.jpa.Bike;
+import de.weyrich.kvbrad.model.nextbike.JsonBike;
 import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
 import de.weyrich.kvbrad.repository.BikeRepository;
@@ -41,11 +41,11 @@ public class ScheduledTasks {
     public void saveToDatabase(RootModel rootModel) {
         final Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
         for (Place place : places) {
-            final Bike[] bikeList = place.getBikeList();
+            final JsonBike[] bikeList = place.getBikeList();
             final double lat = place.getLat();
             final double lng = place.getLng();
             if (bikeList.length > 1) {
-                final de.weyrich.kvbrad.model.jpa.Bike bike = new de.weyrich.kvbrad.model.jpa.Bike(bikeList[0].getNumber(), lat, lng);
+                final Bike bike = new Bike(bikeList[0].getNumber(), lat, lng);
                 bikeRepository.save(bike);
             }
         }

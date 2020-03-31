@@ -23,7 +23,7 @@ public class Place {
     private long freeSpecialRacks;
     private boolean maintenance;
     private TerminalType terminalType;
-    private Bike[] bikeList;
+    private JsonBike[] bikeList;
     private String[] bikeNumbers;
     private PlaceBikeTypes bikeTypes;
     private String placeType;
@@ -77,8 +77,8 @@ public class Place {
     public TerminalType getTerminalType() { return terminalType; }
     public void setTerminalType(TerminalType value) { this.terminalType = value; }
 
-    public Bike[] getBikeList() { return bikeList; }
-    public void setBikeList(Bike[] value) { this.bikeList = value; }
+    public JsonBike[] getBikeList() { return bikeList; }
+    public void setBikeList(JsonBike[] value) { this.bikeList = value; }
 
     public String[] getBikeNumbers() { return bikeNumbers; }
     public void setBikeNumbers(String[] value) { this.bikeNumbers = value; }
