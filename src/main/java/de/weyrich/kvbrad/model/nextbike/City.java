@@ -1,5 +1,6 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
@@ -13,6 +14,7 @@ public class City {
     private long zoom;
     private String mapsIcon;
     private String alias;
+    @JsonProperty("break")
     private boolean cityBreak;
     private String name;
     private long numPlaces;

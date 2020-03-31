@@ -14,6 +14,7 @@ public enum TerminalType {
         case CHARACTER: return "character";
         case FREE: return "free";
         case STELE: return "stele";
+        case UNDEFINED: return "";
         }
         return null;
     }
@@ -24,6 +25,6 @@ public enum TerminalType {
         if (value.equals("free")) return FREE;
         if (value.equals("stele")) return STELE;
         if (value.equals("")) return UNDEFINED;
-        throw new IOException("Cannot deserialize TerminalType");
+        throw new IOException("Cannot deserialize TerminalType with value " + value);
     }
 }

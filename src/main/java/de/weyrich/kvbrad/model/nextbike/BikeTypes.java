@@ -1,8 +1,13 @@
 package de.weyrich.kvbrad.model.nextbike;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BikeTypes {
+    @JsonProperty("14")
     private long the14;
+    @JsonProperty("15")
     private long the15;
+    @JsonProperty("17")
     private long the17;
     private long undefined;
 

@@ -25,7 +25,7 @@ public class Place {
     private TerminalType terminalType;
     private JsonBike[] bikeList;
     private String[] bikeNumbers;
-    private PlaceBikeTypes bikeTypes;
+    private BikeTypes bikeTypes;
     private String placeType;
     private boolean rackLocks;
 
@@ -83,8 +83,8 @@ public class Place {
     public String[] getBikeNumbers() { return bikeNumbers; }
     public void setBikeNumbers(String[] value) { this.bikeNumbers = value; }
 
-    public PlaceBikeTypes getBikeTypes() { return bikeTypes; }
-    public void setBikeTypes(PlaceBikeTypes value) { this.bikeTypes = value; }
+    public BikeTypes getBikeTypes() { return bikeTypes; }
+    public void setBikeTypes(BikeTypes value) { this.bikeTypes = value; }
 
     public String getPlaceType() { return placeType; }
     public void setPlaceType(String value) { this.placeType = value; }
