@@ -10,6 +10,7 @@ import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
 import de.weyrich.kvbrad.repository.BikeRepository;
+import de.weyrich.kvbrad.service.BikeHandlerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class TestJsonBikeRepository {
     public static final double EXTECTED_LNG = 6.973100;
 
     @Autowired
-    ScheduledTasks scheduledTasks;
+    BikeHandlerService bikeHandlerService;
 
     @Autowired
     BikeRepository repository;
@@ -71,11 +72,11 @@ public class TestJsonBikeRepository {
 
         place.setLat(1.00);
         place.setLng(1.00);
-        scheduledTasks.saveToDatabase(rootModel);
+        bikeHandlerService.saveToDatabase(rootModel);
 
         place.setLat(2.0);
         place.setLng(2.0);
-        scheduledTasks.saveToDatabase(rootModel);
+        bikeHandlerService.saveToDatabase(rootModel);
 
         Optional<Bike> bike = repository.findById(bikeId);
 

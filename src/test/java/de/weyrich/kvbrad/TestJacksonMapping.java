@@ -9,6 +9,7 @@ import de.weyrich.kvbrad.model.nextbike.City;
 import de.weyrich.kvbrad.model.nextbike.Country;
 import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
+import de.weyrich.kvbrad.service.BikeHandlerService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,11 +18,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 class TestJacksonMapping {
 
     @Autowired
-    private ScheduledTasks scheduledTasks;
+    BikeHandlerService bikeHandlerService;
 
     @Test
     void downloadBikeData_shouldReturnAllFields() {
-        final RootModel model = scheduledTasks.downloadBikeDate();
+        final RootModel model = bikeHandlerService.downloadBikeDate();
         final Country[] countries = model.getCountries();
         assertNotNull(countries);
 
