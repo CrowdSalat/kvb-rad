@@ -8,22 +8,26 @@ import de.weyrich.kvbrad.repository.BikeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class ScheduledTasks {
-
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
     private final RestTemplate restTemplate;
     private final BikeRepository bikeRepository;
+    private final String url;
 
     @Autowired
-    public ScheduledTasks(RestTemplate restTemplate, BikeRepository bikeRepository) {
+    public ScheduledTasks(RestTemplate restTemplate,
+                          BikeRepository bikeRepository,
+                          @Value("${nextbike.api.kvb.url}") String url) {
         this.restTemplate = restTemplate;
         this.bikeRepository = bikeRepository;
+        this.url = url;
     }
 
     @Scheduled(cron = "* * * * * *")
@@ -34,7 +38,7 @@ public class ScheduledTasks {
     }
 
     public RootModel downloadBikeDate() {
-        String url = "https://api.nextbike.net/maps/nextbike-official.json?city=14";
+        String url = this.url;
         return this.restTemplate.getForObject(url, RootModel.class);
     }
 
