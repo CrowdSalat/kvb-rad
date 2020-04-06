@@ -1,4 +1,4 @@
-package de.weyrich.kvbrad;
+package de.weyrich.kvbrad.controller;
 
 import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.model.nextbike.JsonBike;
@@ -11,12 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Controller
 public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 

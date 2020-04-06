@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+import de.weyrich.kvbrad.controller.ScheduledTasks;
 import de.weyrich.kvbrad.model.nextbike.City;
 import de.weyrich.kvbrad.model.nextbike.Country;
 import de.weyrich.kvbrad.model.nextbike.Place;
