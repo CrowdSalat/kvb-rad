@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class Place {
@@ -77,7 +78,12 @@ public class Place {
     public TerminalType getTerminalType() { return terminalType; }
     public void setTerminalType(TerminalType value) { this.terminalType = value; }
 
-    public JsonBike[] getBikeList() { return bikeList; }
+    public JsonBike[] getBikeList() {
+        if (bikeList == null)
+            return new JsonBike[0];
+        return bikeList;
+    }
+
     public void setBikeList(JsonBike[] value) { this.bikeList = value; }
 
     public String[] getBikeNumbers() { return bikeNumbers; }

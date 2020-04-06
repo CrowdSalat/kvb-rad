@@ -13,6 +13,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
@@ -44,14 +47,16 @@ public class ScheduledTasks {
 
     public void saveToDatabase(RootModel rootModel) {
         final Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
+        List<Bike> bikes = new ArrayList<>();
         for (Place place : places) {
             final JsonBike[] bikeList = place.getBikeList();
             final double lat = place.getLat();
             final double lng = place.getLng();
-            if (bikeList.length > 1) {
-                final Bike bike = new Bike(bikeList[0].getNumber(), lat, lng);
-                bikeRepository.save(bike);
+            for (JsonBike jsonBike : bikeList) {
+                final Bike bike = new Bike(jsonBike.getNumber(), lat, lng);
+                bikes.add(bike);
             }
         }
+        this.bikeRepository.saveAll(bikes);
     }
 }
