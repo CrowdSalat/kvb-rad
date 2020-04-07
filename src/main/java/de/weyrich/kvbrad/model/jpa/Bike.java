@@ -2,16 +2,14 @@ package de.weyrich.kvbrad.model.jpa;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "Bikes")
-public class Bike {
+public class Bike extends AbstractEntity {
 
-    @Id
     @Column(name = "bike_id")
-    private String id;
+    private String bikeId;
 
     @Column(name = "pos_latitude")
     private double lat;
@@ -22,18 +20,18 @@ public class Bike {
     protected Bike() {
     }
 
-    public Bike(String id, double lat, double lng) {
-        this.id = id;
+    public Bike(String bikeId, double lat, double lng) {
+        this.bikeId = bikeId;
         this.lat = lat;
         this.lng = lng;
     }
 
-    public String getId() {
-        return id;
+    public String getBikeId() {
+        return bikeId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setBikeId(String bikeId) {
+        this.bikeId = bikeId;
     }
 
     public double getLat() {
@@ -51,4 +49,6 @@ public class Bike {
     public void setLng(double lng) {
         this.lng = lng;
     }
+
 }
+

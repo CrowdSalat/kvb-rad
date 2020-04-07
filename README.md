@@ -1,5 +1,12 @@
 # kvb rad 
 
+## features
+
+- polls the position of the kvb bikes every 5 minutes and save there current position
+- saves the history of kvb bike for 24 hours 
+- calculates and saves the shortest route between the two positions if a bike was moved between two polls
+
+
 ## api consumption
 
 ### url
@@ -22,6 +29,15 @@ Logging is done via slf4j with the default spring boot configuration.
 ## data 
 
 The data is saved vie spring data repositories and jpa entities. 
+
+There is a MappedSuperclass AbstractEntity which provides the following generated fields: 
+
+- uuid 
+- creationDate (uses spring data annotation @CreatedDate, @EnableJpaAuditing and @EntityListeners(AuditingEntityListener.class))
+- lastModified
+
+The uuid works because of the hibernate annotation @GenericGenerator. 
+The fields creationDate and lastModified use the spring data annotation @CreatedDate and @LastModifiedDate as well as the **AuditingEntityListener**. To activate the listener a configuration class is annotated with **@EnableJpaAuditing**.
 
 ## TODO
 
