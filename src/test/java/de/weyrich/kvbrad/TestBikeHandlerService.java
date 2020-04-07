@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @SpringBootTest
 @Transactional
-public class TestJsonBikeRepository {
+public class TestBikeHandlerService {
 
     public static final String EXPECTED_ID = "123";
     public static final double EXTECTED_LAT = 50.930510;
