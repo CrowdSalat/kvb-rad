@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BikeHandlerService {
@@ -37,13 +38,27 @@ public class BikeHandlerService {
         List<Bike> bikes = new ArrayList<Bike>();
         for (Place place : places) {
             final JsonBike[] bikeList = place.getBikeList();
-            final double lat = place.getLat();
-            final double lng = place.getLng();
             for (JsonBike jsonBike : bikeList) {
-                final Bike bike = new Bike(jsonBike.getNumber(), lat, lng);
-                bikes.add(bike);
+                final String bikeId = jsonBike.getNumber();
+                final double lat = place.getLat();
+                final double lng = place.getLng();
+                if (isMoved(bikeId, lat, lng)) {
+                    final Bike bike = new Bike(bikeId, lat, lng);
+                    bikes.add(bike);
+                }
             }
         }
         this.bikeRepository.saveAll(bikes);
+    }
+
+    private boolean isMoved(String bikeId, double lat, double lng) {
+        Optional<Bike> optBike = this.bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
+        if (optBike.isPresent()) {
+            Bike bike = optBike.get();
+            double oldLat = bike.getLat();
+            double oldLng = bike.getLng();
+            return lat != oldLat || lng != oldLng;
+        }
+        return true;
     }
 }

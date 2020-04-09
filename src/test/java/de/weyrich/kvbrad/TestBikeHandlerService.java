@@ -5,8 +5,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.weyrich.kvbrad.controller.ScheduledTasks;
 import de.weyrich.kvbrad.model.jpa.Bike;
+import de.weyrich.kvbrad.model.nextbike.JsonBike;
 import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
 import de.weyrich.kvbrad.repository.BikeRepository;
@@ -19,34 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
 @Transactional
 public class TestBikeHandlerService {
 
-    public static final String EXPECTED_ID = "123";
-    public static final double EXTECTED_LAT = 50.930510;
-    public static final double EXTECTED_LNG = 6.973100;
-
     @Autowired
     BikeHandlerService bikeHandlerService;
 
     @Autowired
     BikeRepository repository;
-    Bike bike;
 
     @BeforeEach
     public void setUp() {
-        bike = new Bike(EXPECTED_ID, EXTECTED_LAT, EXTECTED_LNG);
-    }
-
-    @Test
-    public void saveBike() {
-        Bike save = repository.save(bike);
-        assertEquals(EXPECTED_ID, save.getId());
-        assertEquals(EXTECTED_LAT, save.getLat());
-        assertEquals(EXTECTED_LNG, save.getLng());
+        repository.deleteAll();
     }
 
     @Test
@@ -65,33 +54,105 @@ public class TestBikeHandlerService {
     }
 
     @Test
-    public void saveToDatabase_withChanges() throws IOException {
-        RootModel rootModel = loadLocalNextbikeJson();
-        Place place = rootModel.getCountries()[0].getCities()[0].getPlaces()[3];
-        final String bikeId = place.getBikeNumbers()[0];
+    public void saveToDatabase_withBikeAndStation() throws IOException {
+        // GIVEN
+        RootModel rootModel = loadLocalNextbikeJson("one_bike_one_station.json");
+        Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
 
+        Place stationPlace = places[0];
+        final int stationSize = stationPlace.getBikeList().length;
+        final double stationLat = stationPlace.getLat();
+        final double stationLng = stationPlace.getLng();
+
+        Place bikePlace = places[1];
+        final double bikeLat = bikePlace.getLat();
+        final double bikeLng = bikePlace.getLng();
+
+
+        // WHEN
+        bikeHandlerService.saveToDatabase(rootModel);
+
+        // THEN
+        final Iterable<Bike> all = repository.findAll();
+        assertThat(all, iterableWithSize(3));
+        assertThat(all, hasItems(
+                hasProperty("lat", is(stationLat)),
+                hasProperty("lng", is(stationLng))
+        ));
+        assertThat(all, hasItems(
+                hasProperty("lat", is(bikeLat)),
+                hasProperty("lng", is(bikeLng))
+        ));
+    }
+
+    @Test
+    public void saveToDatabase_withChanges() throws IOException {
+        // GIVEN
+        RootModel rootModel = loadLocalNextbikeJson("one_bike.json");
+        Place place = rootModel.getCountries()[0].getCities()[0].getPlaces()[0];
+        final String bikeId = place.getBikeNumbers()[0];
         place.setLat(1.00);
         place.setLng(1.00);
         bikeHandlerService.saveToDatabase(rootModel);
 
+        // WHEN
         place.setLat(2.0);
         place.setLng(2.0);
         bikeHandlerService.saveToDatabase(rootModel);
 
-        Optional<Bike> bike = repository.findById(bikeId);
 
+        // THEN
+        List<Bike> allPositions = repository.findByBikeIdOrderByCreationDateDesc(bikeId);
+        assertThat(allPositions.size(), is(2));
+
+        Optional<Bike> bike = repository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
         assertTrue(bike.isPresent());
-        String actualId = bike.get().getId();
-        double actualLat = bike.get().getLat();
-        double actualLng = bike.get().getLng();
-        assertEquals(bikeId, actualId);
-        assertEquals(2.0, actualLat);
-        assertEquals(2.0, actualLng);
+        assertEquals(bikeId, bike.get().getBikeId());
+        assertEquals(2.0, bike.get().getLat());
+        assertEquals(2.0, bike.get().getLng());
     }
 
-    private RootModel loadLocalNextbikeJson() throws IOException {
+    @Test
+    public void saveToDatabase_withChangesAndWithoutChanges() throws IOException {
+        //GIVEN
+        final double oldVal = 1.0;
+        final double newVal = 2.0;
+
+        RootModel rootModel = loadLocalNextbikeJson("two_bikes.json");
+        Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
+
+        Place placeWithChanges = places[0];
+        placeWithChanges.setLng(oldVal);
+        placeWithChanges.setLat(oldVal);
+
+        Place placeWithoutChanges = places[1];
+        placeWithoutChanges.setLng(oldVal);
+        placeWithoutChanges.setLat(oldVal);
+        bikeHandlerService.saveToDatabase(rootModel);
+
+        //WHEN
+        placeWithChanges.setLng(newVal);
+        placeWithChanges.setLat(newVal);
+        bikeHandlerService.saveToDatabase(rootModel);
+
+        //THEN
+        Iterable<Bike> all = this.repository.findAll();
+        assertThat(all, iterableWithSize(3));
+        assertThat(all, hasItems(
+                hasProperty("lat", is(oldVal)),
+                hasProperty("lng", is(oldVal))
+
+        ));
+        assertThat(all, hasItems(
+                hasProperty("lat", is(newVal)),
+                hasProperty("lng", is(newVal))
+
+        ));
+    }
+
+    private RootModel loadLocalNextbikeJson(String name) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        InputStream jsonFileStream = getClass().getClassLoader().getResourceAsStream("example.json");
+        InputStream jsonFileStream = getClass().getClassLoader().getResourceAsStream(name);
         return mapper.readValue(jsonFileStream, RootModel.class);
     }
 }
