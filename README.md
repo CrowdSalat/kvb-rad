@@ -1,5 +1,18 @@
 # kvb rad 
 
+## commands
+
+Compile and run via: `mvn spring-boot:run`
+
+Create jar, create docker image and run container: 
+
+```shell
+mvn clean package -Dmaven.test.skip=true
+docker build -t crowdsalat/kvb-rad . 
+docker run -p 8080:8080 --name kvb-rad crowdsalat/kvb-rad 
+```
+mvn clean package -Dmaven.test.skip=true && docker build `
+
 ## features
 
 - polls the position of the kvb bikes every 5 minutes and save there current position
@@ -43,6 +56,6 @@ The fields creationDate and lastModified use the spring data annotation @Created
 
 - global exception handling: [different methods](https://www.baeldung.com/exception-handling-for-rest-with-spring)
 - use AOP to log all method calls when application is set to debug
-- 
+- save date with timezone and greater precision
 
   
