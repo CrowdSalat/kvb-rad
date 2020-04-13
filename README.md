@@ -7,8 +7,26 @@ Compile and run via: `mvn spring-boot:run`
 Create jar, create docker image and run container: 
 
 ```shell
+# build application
 mvn clean package -Dmaven.test.skip=true
-docker build -t crowdsalat/kvb-rad . 
+docker build -t crowdsalat/kvb-rad .
+
+# create docker network
+docker network create --driver bridge pgnetwork
+
+# create volume so db will be saved
+docker volume create --driver local --name=pgvolume
+
+# create docker container for postgres
+docker run -d --rm \
+--name pg-container \
+-p 5432:5432 \
+-e POSTGRES_PASSWORD=postgres \
+--network=pgnetwork \
+--volume=pgvolume:/pgdata \
+postgres:latest
+
+# create a docker container for application
 docker run -p 8080:8080 --name kvb-rad crowdsalat/kvb-rad 
 ```
 mvn clean package -Dmaven.test.skip=true && docker build `
