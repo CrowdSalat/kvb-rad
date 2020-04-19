@@ -6,8 +6,7 @@ name: Java CI with Maven
 on:
   push:
     tags:
-      - '*'
-    branches: [ master ]
+      - v*
 
 jobs:
   build:
