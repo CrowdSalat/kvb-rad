@@ -1,0 +1,10 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: build jar
+    image: alpine
+    commands:
+      - echo hello
+      - echo world
