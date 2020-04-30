@@ -8,6 +8,3 @@ steps:
     commands:
       - echo hello
       - echo world
-trigger:
-  branch:
-    - master
