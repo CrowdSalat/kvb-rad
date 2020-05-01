@@ -8,10 +8,6 @@ steps:
       - name: cache_m2
         path: /root/.m2/repository
     commands:
-      - pwd
-      - printenv
-      - ./mvnw help:system -B
-      - ./mvnw help:effective-settings -B
       - ./mvnw package -Dmaven.test.skip=true -B
 
 volumes:
