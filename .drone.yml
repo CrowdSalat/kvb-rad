@@ -4,9 +4,17 @@ name: build
 steps:
   - name: build jar
     image: openjdk:14-jdk-slim
+    volumes:
+      - name: cache_m2
+        path: /root/.m2/repository
     commands:
       - pwd
       - printenv
-      - ./mvnw help:system
-      - ./mvnw help:effective-settings
-      - ./mvnw -B package -Dmaven.test.skip=true
+      - ./mvnw help:system -B
+      - ./mvnw help:effective-settings -B
+      - ./mvnw package -Dmaven.test.skip=true -B
+
+volumes:
+  - name: cache_m2
+    host:
+      path: /tmp/drone/cache/m2/repository
