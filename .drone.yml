@@ -1,10 +1,9 @@
 kind: pipeline
 type: docker
-name: default
-
+name: build
 steps:
   - name: build jar
-    image: alpine
+    image: openjdk:14-jdk-slim
     commands:
-      - echo hello
-      - echo world
+      - ./mvnw package -Dmaven.test.skip=true
+      - docker build -t crowdsalat/kvb-rad
