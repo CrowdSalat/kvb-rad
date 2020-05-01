@@ -5,5 +5,8 @@ steps:
   - name: build jar
     image: openjdk:14-jdk-slim
     commands:
-      - ./mvnw package -Dmaven.test.skip=true
-      - docker build -t crowdsalat/kvb-rad
+      - pwd
+      - printenv
+      - ./mvnw help:system
+      - ./mvnw help:effective-settings
+      - ./mvnw -B package -Dmaven.test.skip=true
