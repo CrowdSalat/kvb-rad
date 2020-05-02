@@ -9,7 +9,7 @@ steps:
         path: /root/.m2/repository
     commands:
       - ./mvnw package -Dmaven.test.skip=true -B
-  - name: build jar
+  - name: docker
         image: docker
         commands:
           - docker build -t crowdsalat/kvb-rad
