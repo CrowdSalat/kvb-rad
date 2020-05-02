@@ -12,7 +12,7 @@ steps:
   - name: docker
     image: docker
     commands:
-      - docker build -t crowdsalat/kvb-rad
+      - docker build -t crowdsalat/kvb-rad .
       - docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 --network=pgnetwork --name kvb-rad crowdsalat/kvb-rad
 volumes:
   - name: cache_m2
