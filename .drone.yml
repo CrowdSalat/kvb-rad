@@ -10,10 +10,10 @@ steps:
     commands:
       - ./mvnw package -Dmaven.test.skip=true -B
   - name: docker
-        image: docker
-        commands:
-          - docker build -t crowdsalat/kvb-rad
-          - docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 --network=pgnetwork --name kvb-rad crowdsalat/kvb-rad
+    image: docker
+    commands:
+      - docker build -t crowdsalat/kvb-rad
+      - docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 --network=pgnetwork --name kvb-rad crowdsalat/kvb-rad
 volumes:
   - name: cache_m2
     host:
