@@ -16,7 +16,7 @@ steps:
         path: /var/run/docker.sock
     commands:
       - docker build -t crowdsalat/kvb-rad .
-      - docker run -p 8080:8080 --name kvb-rad crowdsalat/kvb-rad
+      - docker run -p 8080:8080 --network=pgnetwork --name kvb-rad crowdsalat/kvb-rad
 volumes:
   - name: cache_m2
     host:
