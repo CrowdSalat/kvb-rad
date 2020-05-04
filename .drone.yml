@@ -11,10 +11,17 @@ steps:
       - ./mvnw package -Dmaven.test.skip=true -B
   - name: docker
     image: docker
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
     commands:
       - docker build -t crowdsalat/kvb-rad .
-      - docker run -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 --network=pgnetwork --name kvb-rad crowdsalat/kvb-rad
+      - docker run -p 8080:8080 --network=pgnetwork --name kvb-rad crowdsalat/kvb-rad
 volumes:
   - name: cache_m2
     host:
       path: /tmp/drone/cache/m2/repository
+  - name: docker_sock
+      host:
+        path: /var/run/docker.sock
+
