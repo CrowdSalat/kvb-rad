@@ -18,7 +18,7 @@ steps:
       - printenv
       - docker build -t crowdsalat/kvb-rad:latest -t crowdsalat/kvb-rad:${DRONE_TAG} .
       - docker stop kvb-rad
-      - docker run -p -d --rm 8080:8080 --network=pgnetwork --name=kvb-rad crowdsalat/kvb-rad
+      - docker run  -d --rm -p 8080:8080 --network=pgnetwork --name=kvb-rad crowdsalat/kvb-rad
 volumes:
   - name: cache_m2
     host:
