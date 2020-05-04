@@ -16,7 +16,7 @@ steps:
         path: /var/run/docker.sock
     commands:
       - printenv
-      - docker build -t crowdsalat/kvb-rad:latest -t crowdsalat/kvb-rad:${git-tag} .
+      - docker build -t crowdsalat/kvb-rad:latest -t crowdsalat/kvb-rad:${DRONE_TAG} .
       - docker stop kvb-rad
       - docker run -p -d --rm 8080:8080 --network=pgnetwork --name=kvb-rad crowdsalat/kvb-rad
 volumes:
