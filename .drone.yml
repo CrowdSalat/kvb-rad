@@ -22,6 +22,6 @@ volumes:
     host:
       path: /tmp/drone/cache/m2/repository
   - name: docker_sock
-      host:
-        path: /var/run/docker.sock
+    host:
+      path: /var/run/docker.sock
 
