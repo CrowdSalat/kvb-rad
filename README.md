@@ -21,13 +21,14 @@ docker volume create --driver local --name=pgvolume
 docker run -d --rm \
 --name pg-container \
 -p 5432:5432 \
+-e POSTGRES_USER=postgres \
 -e POSTGRES_PASSWORD=postgres \
 --network=pgnetwork \
---volume=pgvolume:/pgdata \
+--volume=pgvolume:/var/lib/postgresql/data \
 postgres:latest
 
 # create a docker container for application
-docker run -p 8080:8080 --name kvb-rad --network=pgnetwork crowdsalat/kvb-rad 
+docker run -d -p 8080:8080 --name kvb-rad --network=pgnetwork crowdsalat/kvb-rad 
 ```
 mvn clean package -Dmaven.test.skip=true && docker build `
 
