@@ -1,6 +1,5 @@
 package de.weyrich.kvbrad.service;
 
-import de.weyrich.kvbrad.controller.ScheduledTasks;
 import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.model.nextbike.JsonBike;
 import de.weyrich.kvbrad.model.nextbike.Place;
@@ -20,7 +19,6 @@ public class BikeHandlerService {
     private final RestTemplate restTemplate;
     private final BikeRepository bikeRepository;
 
-
     public BikeHandlerService(RestTemplate restTemplate,
                               BikeRepository bikeRepository,
                               @Value("${nextbike.api.kvb.url}") String url) {
@@ -33,31 +31,41 @@ public class BikeHandlerService {
         return this.restTemplate.getForObject(this.url, RootModel.class);
     }
 
-    public void saveToDatabase(RootModel rootModel) {
+    public void saveToDatabase(RootModel jsonModel) {
+        final List<Bike> jpaModel = this.mapExternalToInternalModel(jsonModel);
+        this.saveNewPositions(jpaModel);
+    }
+
+    private List<Bike> mapExternalToInternalModel(RootModel rootModel) {
         final Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
-        List<Bike> bikes = new ArrayList<Bike>();
+        List<Bike> bikes = new ArrayList<>();
         for (Place place : places) {
             final JsonBike[] bikeList = place.getBikeList();
             for (JsonBike jsonBike : bikeList) {
                 final String bikeId = jsonBike.getNumber();
                 final double lat = place.getLat();
                 final double lng = place.getLng();
-                if (isMoved(bikeId, lat, lng)) {
-                    final Bike bike = new Bike(bikeId, lat, lng);
-                    bikes.add(bike);
-                }
+                final Bike bike = new Bike(bikeId, lat, lng);
+                bikes.add(bike);
             }
         }
-        this.bikeRepository.saveAll(bikes);
+        return bikes;
     }
 
-    private boolean isMoved(String bikeId, double lat, double lng) {
-        Optional<Bike> optBike = this.bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
+    private void saveNewPositions(List<Bike> bikes) {
+        for (Bike bike : bikes) {
+            if (isMoved(bike)) {
+                bikeRepository.save(bike);
+            }
+        }
+    }
+
+    private boolean isMoved(Bike bikeCurrent) {
+        Optional<Bike> optBike = this.bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeCurrent.getBikeId());
         if (optBike.isPresent()) {
-            Bike bike = optBike.get();
-            double oldLat = bike.getLat();
-            double oldLng = bike.getLng();
-            return lat != oldLat || lng != oldLng;
+            Bike bikeLast = optBike.get();
+            return bikeCurrent.getLat() != bikeLast.getLat()
+                    || bikeCurrent.getLng() != bikeLast.getLng();
         }
         return true;
     }
