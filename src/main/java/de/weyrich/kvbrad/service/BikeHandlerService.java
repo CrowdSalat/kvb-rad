@@ -61,8 +61,8 @@ public class BikeHandlerService {
     }
 
     private void saveNewPositions(List<Bike> bikes) {
-        List<Bike> movedBikes = new ArrayList<>();
-        List<Bike> movedBikesOld = new ArrayList<>();
+        Map<String, Bike> movedBikes = new HashMap<>();
+        Map<String, Bike> movedBikesOld = new HashMap<>();
 
         for (Bike bike : bikes) {
             final String bikeId = bike.getBikeId();
@@ -74,12 +74,15 @@ public class BikeHandlerService {
             }
 
             if (isMoved(bike, bikeLast)) {
-                movedBikes.add(bike);
-                movedBikesOld.add(bikeLast);
+                movedBikes.put(bike.getBikeId(), bike);
+                if (bikeLast != null) {
+                    movedBikesOld.put(bikeLast.getBikeId(), bikeLast);
+                }
             }
         }
-        bikeRepository.saveAll(movedBikes);
-        cacheLastPosition.putAll(movedBikes.stream().collect(Collectors.toMap(bike -> bike.getBikeId(), bike -> bike)));
+        bikeRepository.saveAll(movedBikes.values());
+        cacheLastPosition.putAll(movedBikes);
+
         bikeMovementService.notifyAboutMovements(movedBikes, movedBikesOld);
         this.logger.info("{} bikes were moved since last update.", movedBikes.size());
     }

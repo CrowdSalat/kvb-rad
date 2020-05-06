@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class BikeMovementService {
@@ -25,19 +27,19 @@ public class BikeMovementService {
 
 
     @Async
-    public void notifyAboutMovements(List<Bike> movedBikes, List<Bike> movedBikesOld) {
-        if (movedBikes.size() != movedBikesOld.size()) {
-            logger.warn(" {} new Positions and {} old Positions. The given list should be of the same size.",
-                    movedBikes.size(), movedBikesOld.size());
-        }
-
-        for (int i = 0; i < movedBikes.size(); i++) {
-            handleMovement(movedBikes.get(i), movedBikesOld.get(i));
+    public void notifyAboutMovements(Map<String, Bike> movedBikes, Map<String, Bike> movedBikesOld) {
+        final Set<String> movedBikesBikeId = movedBikes.keySet();
+        for (String movedBikeBikeId : movedBikesBikeId) {
+            final Bike bike = movedBikes.get(movedBikeBikeId);
+            final Bike bikeOld = movedBikesOld.get(movedBikeBikeId);
+            if (bikeOld != null) {
+                handleMovement(bike, bikeOld);
+            }
         }
     }
 
-    public void handleMovement(Bike bikeNew, Bike bikeOld){
-        if(bikeNew == null || bikeOld == null){
+    public void handleMovement(Bike bikeNew, Bike bikeOld) {
+        if (bikeNew == null || bikeOld == null) {
             return;
         }
 
@@ -47,7 +49,7 @@ public class BikeMovementService {
         }
 
         double movedDistance = calc2dEuclideanDistance(bikeNew, bikeOld);
-        if(movedDistance == 0){
+        if (movedDistance == 0) {
             return;
         }
 
@@ -58,11 +60,11 @@ public class BikeMovementService {
     private double calc2dEuclideanDistance(Bike bikeNew, Bike bikeOld) {
         double a = Math.abs(bikeNew.getLat() - bikeOld.getLat());
         double b = Math.abs(bikeNew.getLng() - bikeOld.getLng());
-        return Math.sqrt((a*a) + (b*b));
+        return Math.sqrt((a * a) + (b * b));
     }
 
 
-    private Tour createTour(Bike bikeNew, Bike bikeOld, double movedDistance){
+    private Tour createTour(Bike bikeNew, Bike bikeOld, double movedDistance) {
         Tour tour = new Tour(bikeNew.getBikeId(), movedDistance);
         tour.setStartLat(bikeNew.getLat());
         tour.setStartLng(bikeNew.getLng());
