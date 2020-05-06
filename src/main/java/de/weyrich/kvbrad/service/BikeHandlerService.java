@@ -66,11 +66,12 @@ public class BikeHandlerService {
 
         for (Bike bike : bikes) {
             final String bikeId = bike.getBikeId();
-            final Bike bikeLast = cacheLastPosition.get(bikeId);
+            Bike bikeLast = cacheLastPosition.get(bikeId);
 
             if (bikeLast == null) {
                 final Optional<Bike> optBike = bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
                 optBike.ifPresent(bike1 -> cacheLastPosition.put(bikeId, bike1));
+                bikeLast = cacheLastPosition.get(bikeId);
             }
 
             if (isMoved(bike, bikeLast)) {
