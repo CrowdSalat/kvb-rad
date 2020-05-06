@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class BikeHandlerService {
     private final String url;
     private final RestTemplate restTemplate;
     private final BikeRepository bikeRepository;
+    private final Map<String, Bike> cacheLastPosition = new ConcurrentHashMap<>();
 
     public BikeHandlerService(RestTemplate restTemplate,
                               BikeRepository bikeRepository,
@@ -54,19 +54,26 @@ public class BikeHandlerService {
 
     private void saveNewPositions(List<Bike> bikes) {
         for (Bike bike : bikes) {
-            if (isMoved(bike)) {
+            final String bikeId = bike.getBikeId();
+            final Bike bikeLast = cacheLastPosition.get(bikeId);
+
+            if(bikeLast == null){
+                final Optional<Bike> optBike = bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
+                optBike.ifPresent(bike1 -> cacheLastPosition.put(bikeId, bike1));
+            }
+
+            if (isMoved(bike, bikeLast)) {
                 bikeRepository.save(bike);
+                cacheLastPosition.put(bikeId, bike);
             }
         }
     }
 
-    private boolean isMoved(Bike bikeCurrent) {
-        Optional<Bike> optBike = this.bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeCurrent.getBikeId());
-        if (optBike.isPresent()) {
-            Bike bikeLast = optBike.get();
+    private boolean isMoved(Bike bikeCurrent, Bike bikeLast) {
+            if (bikeLast == null){
+                return true;
+            }
             return bikeCurrent.getLat() != bikeLast.getLat()
                     || bikeCurrent.getLng() != bikeLast.getLng();
-        }
-        return true;
     }
 }
