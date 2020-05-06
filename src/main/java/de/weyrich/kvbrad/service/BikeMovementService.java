@@ -32,11 +32,15 @@ public class BikeMovementService {
         }
 
         for (int i = 0; i < movedBikes.size(); i++) {
-            handleMovement(movedBikes.get(i), movedBikesOld.get(0));
+            handleMovement(movedBikes.get(i), movedBikesOld.get(i));
         }
     }
 
     public void handleMovement(Bike bikeNew, Bike bikeOld){
+        if(bikeNew == null || bikeOld == null){
+            return;
+        }
+
         if (!bikeNew.getBikeId().equals(bikeOld.getBikeId())) {
             logger.warn("Only one bike_id is expected but got two: {}, {}", bikeNew.getBikeId(), bikeOld.getBikeId());
             return;
