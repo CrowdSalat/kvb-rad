@@ -5,6 +5,8 @@ import de.weyrich.kvbrad.model.nextbike.JsonBike;
 import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
 import de.weyrich.kvbrad.repository.BikeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class BikeHandlerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BikeHandlerService.class);
     private final String url;
     private final RestTemplate restTemplate;
     private final BikeRepository bikeRepository;
@@ -53,6 +57,7 @@ public class BikeHandlerService {
     }
 
     private void saveNewPositions(List<Bike> bikes) {
+        int movedBikes = 0;
         for (Bike bike : bikes) {
             final String bikeId = bike.getBikeId();
             final Bike bikeLast = cacheLastPosition.get(bikeId);
@@ -65,8 +70,10 @@ public class BikeHandlerService {
             if (isMoved(bike, bikeLast)) {
                 bikeRepository.save(bike);
                 cacheLastPosition.put(bikeId, bike);
+                movedBikes++;
             }
         }
+        this.logger.info("{} bikes were moved since last update.", movedBikes);
     }
 
     private boolean isMoved(Bike bikeCurrent, Bike bikeLast) {
