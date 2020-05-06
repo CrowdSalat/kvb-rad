@@ -27,7 +27,7 @@ docker run -d --rm \
 postgres:latest
 
 # create a docker container for application
-docker run -p 8080:8080 --name kvb-rad crowdsalat/kvb-rad 
+docker run -p 8080:8080 --name kvb-rad --network=pgnetwork crowdsalat/kvb-rad 
 ```
 mvn clean package -Dmaven.test.skip=true && docker build `
 
