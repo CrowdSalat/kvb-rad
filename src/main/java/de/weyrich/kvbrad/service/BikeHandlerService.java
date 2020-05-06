@@ -22,13 +22,16 @@ public class BikeHandlerService {
     private final String url;
     private final RestTemplate restTemplate;
     private final BikeRepository bikeRepository;
+    private final BikeMovementService bikeMovementService;
     private final Map<String, Bike> cacheLastPosition = new ConcurrentHashMap<>();
 
     public BikeHandlerService(RestTemplate restTemplate,
                               BikeRepository bikeRepository,
+                              BikeMovementService bikeMovementService,
                               @Value("${nextbike.api.kvb.url}") String url) {
         this.restTemplate = restTemplate;
         this.bikeRepository = bikeRepository;
+        this.bikeMovementService = bikeMovementService;
         this.url = url;
     }
 
@@ -59,6 +62,8 @@ public class BikeHandlerService {
 
     private void saveNewPositions(List<Bike> bikes) {
         List<Bike> movedBikes = new ArrayList<>();
+        List<Bike> movedBikesOld = new ArrayList<>();
+
         for (Bike bike : bikes) {
             final String bikeId = bike.getBikeId();
             final Bike bikeLast = cacheLastPosition.get(bikeId);
@@ -70,10 +75,12 @@ public class BikeHandlerService {
 
             if (isMoved(bike, bikeLast)) {
                 movedBikes.add(bike);
+                movedBikesOld.add(bikeLast);
             }
         }
         bikeRepository.saveAll(movedBikes);
         cacheLastPosition.putAll(movedBikes.stream().collect(Collectors.toMap(bike -> bike.getBikeId(), bike -> bike)));
+        bikeMovementService.notifyAboutMovements(movedBikes, movedBikesOld);
         this.logger.info("{} bikes were moved since last update.", movedBikes.size());
     }
 
