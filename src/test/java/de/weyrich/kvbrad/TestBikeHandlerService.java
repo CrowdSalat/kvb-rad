@@ -40,17 +40,15 @@ public class TestBikeHandlerService {
 
     @Test
     public void scheduledDownload() throws InterruptedException {
-        Thread.sleep(1000);
+        Thread.sleep(5000);
         final Iterable<Bike> all = repository.findAll();
 
-        int count = 0;
         for (Bike bike : all) {
-            count++;
             assertNotNull(bike.getId());
             assertThat(bike.getLat(), not(0.0));
             assertThat(bike.getLng(), not(0.0));
         }
-        assertTrue(count > 2);
+        assertThat(all , iterableWithSize(greaterThan(500)));
     }
 
     @Test
