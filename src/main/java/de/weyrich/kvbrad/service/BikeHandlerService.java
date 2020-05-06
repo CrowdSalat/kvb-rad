@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class BikeHandlerService {
@@ -57,30 +58,30 @@ public class BikeHandlerService {
     }
 
     private void saveNewPositions(List<Bike> bikes) {
-        int movedBikes = 0;
+        List<Bike> movedBikes = new ArrayList<>();
         for (Bike bike : bikes) {
             final String bikeId = bike.getBikeId();
             final Bike bikeLast = cacheLastPosition.get(bikeId);
 
-            if(bikeLast == null){
+            if (bikeLast == null) {
                 final Optional<Bike> optBike = bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
                 optBike.ifPresent(bike1 -> cacheLastPosition.put(bikeId, bike1));
             }
 
             if (isMoved(bike, bikeLast)) {
-                bikeRepository.save(bike);
-                cacheLastPosition.put(bikeId, bike);
-                movedBikes++;
+                movedBikes.add(bike);
             }
         }
-        this.logger.info("{} bikes were moved since last update.", movedBikes);
+        bikeRepository.saveAll(movedBikes);
+        cacheLastPosition.putAll(movedBikes.stream().collect(Collectors.toMap(bike -> bike.getBikeId(), bike -> bike)));
+        this.logger.info("{} bikes were moved since last update.", movedBikes.size());
     }
 
     private boolean isMoved(Bike bikeCurrent, Bike bikeLast) {
-            if (bikeLast == null){
-                return true;
-            }
-            return bikeCurrent.getLat() != bikeLast.getLat()
-                    || bikeCurrent.getLng() != bikeLast.getLng();
+        if (bikeLast == null) {
+            return true;
+        }
+        return bikeCurrent.getLat() != bikeLast.getLat()
+                || bikeCurrent.getLng() != bikeLast.getLng();
     }
 }
