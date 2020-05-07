@@ -1,5 +1,6 @@
 package de.weyrich.kvbrad.service;
 
+import de.weyrich.kvbrad.aspepcts.ActivateProfiler;
 import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.model.nextbike.JsonBike;
 import de.weyrich.kvbrad.model.nextbike.Place;
@@ -8,12 +9,12 @@ import de.weyrich.kvbrad.repository.BikeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Service
 public class BikeHandlerService {
@@ -39,6 +40,7 @@ public class BikeHandlerService {
         return this.restTemplate.getForObject(this.url, RootModel.class);
     }
 
+    @ActivateProfiler
     public void saveToDatabase(RootModel jsonModel) {
         final List<Bike> jpaModel = this.mapExternalToInternalModel(jsonModel);
         this.saveNewPositions(jpaModel);

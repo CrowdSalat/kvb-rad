@@ -1,5 +1,6 @@
 package de.weyrich.kvbrad.service;
 
+import de.weyrich.kvbrad.aspepcts.ActivateProfiler;
 import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.model.jpa.Tour;
 import de.weyrich.kvbrad.repository.BikeRepository;
@@ -26,6 +27,7 @@ public class BikeMovementService {
     }
 
 
+    @ActivateProfiler
     @Async
     public void notifyAboutMovements(Map<String, Bike> movedBikes, Map<String, Bike> movedBikesOld) {
         final Set<String> movedBikesBikeId = movedBikes.keySet();
