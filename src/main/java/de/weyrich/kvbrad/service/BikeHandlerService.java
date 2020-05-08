@@ -29,7 +29,7 @@ public class BikeHandlerService {
     public BikeHandlerService(RestTemplate restTemplate,
                               BikeRepository bikeRepository,
                               BikeMovementService bikeMovementService,
-                              @Value("${nextbike.api.kvb.url}") String url) {
+                              @Value("${api.nextbike.kvb.url}") String url) {
         this.restTemplate = restTemplate;
         this.bikeRepository = bikeRepository;
         this.bikeMovementService = bikeMovementService;
