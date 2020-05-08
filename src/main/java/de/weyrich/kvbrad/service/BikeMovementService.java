@@ -1,14 +1,19 @@
 package de.weyrich.kvbrad.service;
 
 import de.weyrich.kvbrad.aspepcts.ActivateProfiler;
+import de.weyrich.kvbrad.model.graphhopper.Welcome;
 import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.model.jpa.Tour;
 import de.weyrich.kvbrad.repository.BikeRepository;
 import de.weyrich.kvbrad.repository.TourRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 import java.util.Set;
@@ -18,12 +23,20 @@ public class BikeMovementService {
 
     private final Logger logger = LoggerFactory.getLogger(BikeMovementService.class);
 
-    public BikeRepository bikeRepo;
-    public TourRepository tourRepo;
+    private final RestTemplate template;
+    private final BikeRepository bikeRepo;
+    private final TourRepository tourRepo;
 
-    public BikeMovementService(BikeRepository bikeRepo, TourRepository tourRepo) {
+    private final String graphhopperUrl;
+
+    public BikeMovementService(RestTemplate template,
+                               BikeRepository bikeRepo,
+                               TourRepository tourRepo,
+                               @Value("api.graphhopper.route.url") String graphhopperUrl) {
+        this.template = template;
         this.bikeRepo = bikeRepo;
         this.tourRepo = tourRepo;
+        this.graphhopperUrl = graphhopperUrl;
     }
 
 
@@ -50,7 +63,7 @@ public class BikeMovementService {
             return;
         }
 
-        double movedDistance = calc2dEuclideanDistance(bikeNew, bikeOld);
+        double movedDistance = calcDistance(bikeNew, bikeOld);
         if (movedDistance == 0) {
             return;
         }
@@ -59,12 +72,26 @@ public class BikeMovementService {
         tourRepo.save(tour);
     }
 
-    private double calc2dEuclideanDistance(Bike bikeNew, Bike bikeOld) {
-        double a = Math.abs(bikeNew.getLat() - bikeOld.getLat());
-        double b = Math.abs(bikeNew.getLng() - bikeOld.getLng());
-        return Math.sqrt((a * a) + (b * b));
+    private double calcDistance(Bike bikeNew, Bike bikeOld) {
+        final Welcome forObject = loadRoute(bikeNew, bikeOld);
+        return forObject.getPaths()[0].getDistance();
     }
 
+    private Welcome loadRoute(Bike bikeNew, Bike bikeOld) {
+        final String query = "?point={latitude},{longitude}&point={latitude2},{longitude2}7&vehicle=bike&instructions=false";
+
+        final ResponseEntity<Welcome> forEntity = template.getForEntity(graphhopperUrl + query, Welcome.class,
+                bikeOld.getLat(),
+                bikeOld.getLng(),
+                bikeNew.getLat(),
+                bikeNew.getLng());
+
+        if(forEntity.getStatusCode() != HttpStatus.OK ) {
+            logger.warn("API call failed {}", forEntity.toString());
+        }
+
+        return forEntity.getBody();
+    }
 
     private Tour createTour(Bike bikeNew, Bike bikeOld, double movedDistance) {
         Tour tour = new Tour(bikeNew.getBikeId(), movedDistance);
