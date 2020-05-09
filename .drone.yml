@@ -20,13 +20,14 @@ steps:
       tags:
         - latest
         - {DRONE_TAG}
+      debug: "true"
   - name: start application
     image: docker/compose
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker-compose up -d --force-recreate
+      - docker-compose up -f docker-compose.yml -d --force-recreate
 
 volumes:
   - name: cache_m2
