@@ -17,8 +17,7 @@ steps:
       password:
         from_secret: docker_password
       repo: crowdsalat/kvb-rad
-      tags:
-        - {DRONE_TAG}
+      auto_tag: "true"
   - name: start application
     image: docker/compose
     volumes:
