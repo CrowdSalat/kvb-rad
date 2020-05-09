@@ -2,15 +2,14 @@
 
 ## commands
 
-Compile and run via: `mvn spring-boot:run`
+- Compile and run via: `mvn spring-boot:run`
+- Compile: `mvn clean package -Dmaven.test.skip=true`
+- Compile and build docker container locally: `mvn clean package -Dmaven.test.skip=true && docker build -t crowdsalat/kvb-rad .`
+- Start application with docker-compose: `docker-compose up -d`
 
-Create jar, create docker image and run container: 
+Start application with docker: 
 
 ```shell
-# build application
-mvn clean package -Dmaven.test.skip=true
-docker build -t crowdsalat/kvb-rad .
-
 # create docker network
 docker network create --driver bridge kvbbike
 
@@ -18,10 +17,10 @@ docker network create --driver bridge kvbbike
 docker volume create --driver local --name=kvbbike-db
 
 # start mysql
-docker run -d --name kvb-mysql -e MYSQL_ROOT_PASSWORD=myql -e MYSQL_DATABASE=kvbbike-db -v kvbbike-db:/var/lib/mysql -p 3306:3306 mysql:latest
+docker run -d -p 3306:3306 --name kvb-mysql -network kvbbike -e MYSQL_ROOT_PASSWORD=myql -e MYSQL_DATABASE=kvbbike-db -v kvbbike-db:/var/lib/mysql mysql:latest
 
 #start graphhopper
-docker run -d -p 8989:8989 -p --name graphhopper --network kvbbike crowdsalat/graphhopper-cologne-bike
+docker run -d -p 8989:8989 --name graphhopper --network kvbbike crowdsalat/graphhopper-cologne-bike
 
 # start the application
 docker run -d -p 8080:8080 --name kvb-rad --network=kvbbike crowdsalat/kvb-rad 
