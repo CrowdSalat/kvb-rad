@@ -12,38 +12,31 @@ mvn clean package -Dmaven.test.skip=true
 docker build -t crowdsalat/kvb-rad .
 
 # create docker network
-docker network create --driver bridge pgnetwork
+docker network create --driver bridge kvbbike
 
 # create volume so db will be saved
-docker volume create --driver local --name=pgvolume
+docker volume create --driver local --name=kvbbike-db
 
-# create docker container for postgres
-docker run -d --rm \
---name pg-container \
--p 5432:5432 \
--e POSTGRES_USER=postgres \
--e POSTGRES_PASSWORD=postgres \
---network=pgnetwork \
---volume=pgvolume:/var/lib/postgresql/data \
-postgres:latest
+# start mysql
+docker run -d --name kvb-mysql -e MYSQL_ROOT_PASSWORD=myql -e MYSQL_DATABASE=kvbbike-db -v kvbbike-db:/var/lib/mysql -p 3306:3306 mysql:latest
 
-# create a docker container for application
-docker run -d -p 8080:8080 --name kvb-rad --network=pgnetwork crowdsalat/kvb-rad 
+#start graphhopper
+docker run -d -p 8989:8989 -p --name graphhopper --network kvbbike crowdsalat/graphhopper-cologne-bike
+
+# start the application
+docker run -d -p 8080:8080 --name kvb-rad --network=kvbbike crowdsalat/kvb-rad 
 ```
-mvn clean package -Dmaven.test.skip=true && docker build `
 
 ## features
 
-- polls the position of the kvb bikes every 5 minutes and save there current position
-- saves the history of kvb bike for 24 hours 
+- polls the position of the kvb bikes every minute and save the current position
 - calculates and saves the shortest route between the two positions if a bike was moved between two polls
-
 
 ## api consumption
 
 ### url
 
-This project uses the nextbike api for cologne: [https://api.nextbike.net/maps/nextbike-official.json?city=14]. *Alternatively there is a GBFS (General Bikeshare Feed Specification) conform api under: [https://api.nextbike.net/maps/gbfs/v1/nextbike_kg/gbfs.json]*
+This project uses the nextbike api for cologne: [https://api.nextbike.net/maps/nextbike-live.json?city=14]. *Alternatively there is a GBFS (General Bikeshare Feed Specification) conform api under: [https://api.nextbike.net/maps/gbfs/v1/nextbike_kg/gbfs.json]*
 
 ### used libraries
 
