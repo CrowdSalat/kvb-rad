@@ -32,7 +32,7 @@ public class BikeMovementService {
     public BikeMovementService(RestTemplate template,
                                BikeRepository bikeRepo,
                                TourRepository tourRepo,
-                               @Value("api.graphhopper.route.url") String graphhopperUrl) {
+                               @Value("${api.graphhopper.route.url}") String graphhopperUrl) {
         this.template = template;
         this.bikeRepo = bikeRepo;
         this.tourRepo = tourRepo;
