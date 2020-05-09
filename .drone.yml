@@ -27,7 +27,7 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker-compose up -f docker-compose.yml -d --force-recreate
+      - docker-compose up -d --force-recreate
 
 volumes:
   - name: cache_m2
