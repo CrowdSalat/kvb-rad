@@ -64,12 +64,14 @@ public class BikeMovementService {
         }
 
         double movedDistance = calcDistance(bikeNew, bikeOld);
-        if (movedDistance == 0) {
+        if (movedDistance < 5.0) {
+            bikeRepo.delete(bikeOld);
             return;
         }
 
         final Tour tour = createTour(bikeNew, bikeOld, movedDistance);
         tourRepo.save(tour);
+        bikeRepo.delete(bikeOld);
     }
 
     private double calcDistance(Bike bikeNew, Bike bikeOld) {
