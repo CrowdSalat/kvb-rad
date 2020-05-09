@@ -12,6 +12,9 @@ import org.springframework.stereotype.Controller;
 public class ScheduledTasks {
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
+    // in ms
+    private static final int interval = 60 * 1000;
+
     private final BikeHandlerService bikeHandlerService;
 
     @Autowired
@@ -20,7 +23,7 @@ public class ScheduledTasks {
     }
 
 
-    @Scheduled(fixedDelay = 300000)
+    @Scheduled(fixedDelay = interval)
     public void scheduleDownloadBikeData() {
         logger.info("download");
         RootModel rootModel = bikeHandlerService.downloadBikeDate();
