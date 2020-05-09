@@ -13,14 +13,13 @@ steps:
     image: plugins/docker
     settings:
       username:
-        from_secret: DOCKERHUB_USER
+        from_secret: docker_username
       password:
-        from_secret: DOCKERHUB_PW
+        from_secret: docker_password
       repo: crowdsalat/kvb-rad
       tags:
         - latest
         - {DRONE_TAG}
-      debug: "true"
   - name: start application
     image: docker/compose
     volumes:
