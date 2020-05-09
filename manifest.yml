@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: kvb-bike
+spec:
+  containers:
+  - name: kvb-bike
+    image: crowdsalat/kvb-bike
+---
