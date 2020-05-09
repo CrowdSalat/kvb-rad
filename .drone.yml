@@ -27,6 +27,7 @@ steps:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
+      - docker-compose pull
       - docker-compose up -d --force-recreate
 
 volumes:
