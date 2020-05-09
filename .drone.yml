@@ -9,15 +9,25 @@ steps:
         path: /root/.m2/repository
     commands:
       - ./mvnw package -Dmaven.test.skip=true -B
-  - name: docker
-    image: docker
+  - name: build and push docker image
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: DOCKERHUB_USER
+      password:
+        from_secret: DOCKERHUB_PW
+      repo: crowdsalat/kvb-rad
+      tags:
+        - latest
+        - {DRONE_TAG}
+  - name: start application
+    image: docker/compose
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
     commands:
-      - docker build -t crowdsalat/kvb-rad:latest -t crowdsalat/kvb-rad:${DRONE_TAG} .
-      - docker rm -f kvb-rad || true
-      - docker run  -d -p 8080:8080 --network=pgnetwork --name=kvb-rad crowdsalat/kvb-rad:${DRONE_TAG}
+      - docker-compose up -d --force-recreate
+
 volumes:
   - name: cache_m2
     host:
