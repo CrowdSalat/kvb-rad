@@ -76,7 +76,7 @@ The fields creationDate and lastModified use the spring data annotation @Created
 - global exception handling: [different methods](https://www.baeldung.com/exception-handling-for-rest-with-spring)
 - save date with timezone and greater precision
 - look at transactions
+- handle bike points which could not been calculated
 - handle bikes which are not in cologne: org.springframework.web.client.HttpClientErrorException$BadRequest: 400 Bad Request: [{"message":"Point 0 is out of bounds: 51.450448888889,7.0227255555556","hints":[{"message":"Point 0 is out of bounds: 51.450448888889,7.0227255555556","details":"com.graphhopper.util.exceptions.PointOutOfBoundsException","point_index":0}]}]
-
 
   
