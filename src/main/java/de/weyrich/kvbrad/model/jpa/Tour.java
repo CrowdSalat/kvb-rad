@@ -12,7 +12,7 @@ public class Tour extends AbstractEntity {
     private String bikeId;
     @Column(name = "distance")
     private double distance;
-    @Column(name = "encoded_waypoints")
+    @Column(name = "encoded_waypoints", length=1024)
     private String encodedWaypoints;
     @Column(name = "start_longitude")
     private double startLng;
