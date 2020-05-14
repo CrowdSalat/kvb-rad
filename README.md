@@ -33,7 +33,11 @@ docker run -d -p 8080:8080 --name kvb-rad --network=kvbbike crowdsalat/kvb-rad
 
 ## api consumption
 
-### url
+### graphhopper
+
+This project uses a locally hosted [Graphhopper](https://www.graphhopper.com/de/) server to calculate the distances and the waypoints of a bike movement. The route api is explained [here](https://github.com/graphhopper/graphhopper/blob/master/docs/web/api-doc.md).
+
+### kvb
 
 This project uses the nextbike api for cologne: [https://api.nextbike.net/maps/nextbike-live.json?city=14]. *Alternatively there is a GBFS (General Bikeshare Feed Specification) conform api under: [https://api.nextbike.net/maps/gbfs/v1/nextbike_kg/gbfs.json]*
 
