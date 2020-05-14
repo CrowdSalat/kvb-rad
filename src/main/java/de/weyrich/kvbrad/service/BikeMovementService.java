@@ -65,7 +65,7 @@ public class BikeMovementService {
             return;
         }
 
-        if(this.approximateDistance(bikeNew, bikeOld) < 5.0){
+        if (this.approximateDistance(bikeNew, bikeOld) < movementThreshold) {
             logger.trace("Bike was not moved but it was probably a GPS correction.");
             bikeRepo.delete(bikeOld);
             return;
@@ -74,11 +74,6 @@ public class BikeMovementService {
         final Welcome welcome = loadRoute(bikeNew, bikeOld);
         double movedDistance = welcome.getPaths()[0].getDistance();
         String encodedWaypoints = welcome.getPaths()[0].getPoints();
-
-        if (movedDistance < movementThreshold) {
-            bikeRepo.delete(bikeOld);
-            return;
-        }
 
         final Tour tour = createTour(bikeNew, bikeOld, movedDistance, encodedWaypoints);
         tourRepo.save(tour);
@@ -89,11 +84,11 @@ public class BikeMovementService {
      * Impl of Haversine formula.
      */
     private double approximateDistance(Bike bike1, Bike bike2) {
-        return SloppyMath.haversinMeters(bike1.getLat(), bike1.getLng(),bike2.getLat(), bike2.getLng());
+        return SloppyMath.haversinMeters(bike1.getLat(), bike1.getLng(), bike2.getLat(), bike2.getLng());
     }
 
     private Welcome loadRoute(Bike bikeNew, Bike bikeOld) {
-        final String query = "?point={latitude},{longitude}&point={latitude2},{longitude2}"+
+        final String query = "?point={latitude},{longitude}&point={latitude2},{longitude2}" +
                 "&vehicle=bike&locale=de&instructions=false&details=street_name&points_encoded=true";
 
 
@@ -103,7 +98,7 @@ public class BikeMovementService {
                 bikeNew.getLat(),
                 bikeNew.getLng());
 
-        if(forEntity.getStatusCode() != HttpStatus.OK ) {
+        if (forEntity.getStatusCode() != HttpStatus.OK) {
             logger.warn("API call failed {}", forEntity.toString());
         }
 
