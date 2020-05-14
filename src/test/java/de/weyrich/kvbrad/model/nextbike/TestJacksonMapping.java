@@ -1,4 +1,4 @@
-package de.weyrich.kvbrad;
+package de.weyrich.kvbrad.model.nextbike;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
