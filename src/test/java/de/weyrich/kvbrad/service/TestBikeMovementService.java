@@ -1,4 +1,4 @@
-package de.weyrich.kvbrad;
+package de.weyrich.kvbrad.service;
 
 import de.weyrich.kvbrad.model.graphhopper.Path;
 import de.weyrich.kvbrad.model.graphhopper.Welcome;
