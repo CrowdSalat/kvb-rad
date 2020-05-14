@@ -23,6 +23,7 @@ import java.util.Set;
 public class BikeMovementService {
 
     private final Logger logger = LoggerFactory.getLogger(BikeMovementService.class);
+    private final double movementThreshold = 30.0;
 
     private final RestTemplate template;
     private final BikeRepository bikeRepo;
@@ -74,7 +75,7 @@ public class BikeMovementService {
         double movedDistance = welcome.getPaths()[0].getDistance();
         String encodedWaypoints = welcome.getPaths()[0].getPoints();
 
-        if (movedDistance < 5.0) {
+        if (movedDistance < movementThreshold) {
             bikeRepo.delete(bikeOld);
             return;
         }
