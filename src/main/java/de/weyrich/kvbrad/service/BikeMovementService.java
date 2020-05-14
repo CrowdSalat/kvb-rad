@@ -6,6 +6,7 @@ import de.weyrich.kvbrad.model.jpa.Bike;
 import de.weyrich.kvbrad.model.jpa.Tour;
 import de.weyrich.kvbrad.repository.BikeRepository;
 import de.weyrich.kvbrad.repository.TourRepository;
+import org.apache.lucene.util.SloppyMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +64,12 @@ public class BikeMovementService {
             return;
         }
 
+        if(this.approximateDistance(bikeNew, bikeOld) < 5.0){
+            logger.trace("Bike was not moved but it was probably a GPS correction.");
+            bikeRepo.delete(bikeOld);
+            return;
+        }
+
         double movedDistance = calcDistance(bikeNew, bikeOld);
         if (movedDistance < 5.0) {
             bikeRepo.delete(bikeOld);
@@ -72,6 +79,13 @@ public class BikeMovementService {
         final Tour tour = createTour(bikeNew, bikeOld, movedDistance);
         tourRepo.save(tour);
         bikeRepo.delete(bikeOld);
+    }
+
+    /**
+     * Impl of Haversine formula.
+     */
+    private double approximateDistance(Bike bike1, Bike bike2) {
+        return SloppyMath.haversinMeters(bike1.getLat(), bike1.getLng(),bike2.getLat(), bike2.getLng());
     }
 
     private double calcDistance(Bike bikeNew, Bike bikeOld) {
