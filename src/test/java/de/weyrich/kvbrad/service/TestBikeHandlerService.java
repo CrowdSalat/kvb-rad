@@ -1,31 +1,32 @@
 package de.weyrich.kvbrad.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.weyrich.kvbrad.model.jpa.Bike;
-import de.weyrich.kvbrad.model.nextbike.JsonBike;
 import de.weyrich.kvbrad.model.nextbike.Place;
 import de.weyrich.kvbrad.model.nextbike.RootModel;
 import de.weyrich.kvbrad.repository.BikeRepository;
-import de.weyrich.kvbrad.service.BikeHandlerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Transactional
 public class TestBikeHandlerService {
+
+    @MockBean
+    BikeMovementService bikeMovementService;
 
     @Autowired
     BikeHandlerService bikeHandlerService;
