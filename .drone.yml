@@ -28,7 +28,7 @@ steps:
         path: /var/run/docker.sock
     commands:
       - docker-compose pull
-      - docker-compose up -d --no-deps service
+      - docker-compose up -d --no-deps --remove-orphans
 
 volumes:
   - name: cache_m2
