@@ -70,13 +70,16 @@ public class BikeMovementService {
             return;
         }
 
-        double movedDistance = calcDistance(bikeNew, bikeOld);
+        final Welcome welcome = loadRoute(bikeNew, bikeOld);
+        double movedDistance = welcome.getPaths()[0].getDistance();
+        String encodedWaypoints = welcome.getPaths()[0].getPoints();
+
         if (movedDistance < 5.0) {
             bikeRepo.delete(bikeOld);
             return;
         }
 
-        final Tour tour = createTour(bikeNew, bikeOld, movedDistance);
+        final Tour tour = createTour(bikeNew, bikeOld, movedDistance, encodedWaypoints);
         tourRepo.save(tour);
         bikeRepo.delete(bikeOld);
     }
@@ -88,13 +91,10 @@ public class BikeMovementService {
         return SloppyMath.haversinMeters(bike1.getLat(), bike1.getLng(),bike2.getLat(), bike2.getLng());
     }
 
-    private double calcDistance(Bike bikeNew, Bike bikeOld) {
-        final Welcome forObject = loadRoute(bikeNew, bikeOld);
-        return forObject.getPaths()[0].getDistance();
-    }
-
     private Welcome loadRoute(Bike bikeNew, Bike bikeOld) {
-        final String query = "?point={latitude},{longitude}&point={latitude2},{longitude2}7&vehicle=bike&instructions=false";
+        final String query = "?point={latitude},{longitude}&point={latitude2},{longitude2}"+
+                "&vehicle=bike&locale=de&instructions=false&details=street_name&points_encoded=true";
+
 
         final ResponseEntity<Welcome> forEntity = template.getForEntity(graphhopperUrl + query, Welcome.class,
                 bikeOld.getLat(),
@@ -109,8 +109,8 @@ public class BikeMovementService {
         return forEntity.getBody();
     }
 
-    private Tour createTour(Bike bikeNew, Bike bikeOld, double movedDistance) {
-        Tour tour = new Tour(bikeNew.getBikeId(), movedDistance);
+    private Tour createTour(Bike bikeNew, Bike bikeOld, double movedDistance, String encodedWaypoints) {
+        Tour tour = new Tour(bikeNew.getBikeId(), movedDistance, encodedWaypoints);
         tour.setStartLat(bikeNew.getLat());
         tour.setStartLng(bikeNew.getLng());
         tour.setEndLat(bikeOld.getLat());

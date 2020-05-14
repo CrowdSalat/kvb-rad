@@ -35,11 +35,15 @@ docker run -d -p 8080:8080 --name kvb-rad --network=kvbbike crowdsalat/kvb-rad
 
 ### graphhopper
 
-This project uses a locally hosted [Graphhopper](https://www.graphhopper.com/de/) server to calculate the distances and the waypoints of a bike movement. The route api is explained [here](https://github.com/graphhopper/graphhopper/blob/master/docs/web/api-doc.md).
+This project uses a locally hosted [Graphhopper](https://www.graphhopper.com/de/) server to calculate the distances and the waypoints of a bike movement. 
+The route api is explained [here](https://github.com/graphhopper/graphhopper/blob/master/docs/web/api-doc.md). 
+The waypoints are encoded to reduce bandwidth. To decode them there is a official [java] (https://github.com/graphhopper/graphhopper/blob/d70b63660ac5200b03c38ba3406b8f93976628a6/web/src/main/java/com/graphhopper/http/WebHelper.java#L43) 
+and a official [javascript](https://github.com/graphhopper/graphhopper/blob/d70b63660ac5200b03c38ba3406b8f93976628a6/web/src/main/webapp/js/ghrequest.js#L139) library from graphhopper.
 
 ### kvb
 
-This project uses the nextbike api for cologne: [https://api.nextbike.net/maps/nextbike-live.json?city=14]. *Alternatively there is a GBFS (General Bikeshare Feed Specification) conform api under: [https://api.nextbike.net/maps/gbfs/v1/nextbike_kg/gbfs.json]*
+This project uses the nextbike api for cologne: [https://api.nextbike.net/maps/nextbike-live.json?city=14]. 
+Alternatively there is a GBFS (General Bikeshare Feed Specification) conform api under: [https://api.nextbike.net/maps/gbfs/v1/nextbike_kg/gbfs.json]
 
 ### used libraries
 
@@ -70,7 +74,9 @@ The fields creationDate and lastModified use the spring data annotation @Created
 ## TODO
 
 - global exception handling: [different methods](https://www.baeldung.com/exception-handling-for-rest-with-spring)
-- use AOP to log all method calls when application is set to debug
 - save date with timezone and greater precision
+- look at transactions
+- handle bikes which are not in cologne: org.springframework.web.client.HttpClientErrorException$BadRequest: 400 Bad Request: [{"message":"Point 0 is out of bounds: 51.450448888889,7.0227255555556","hints":[{"message":"Point 0 is out of bounds: 51.450448888889,7.0227255555556","details":"com.graphhopper.util.exceptions.PointOutOfBoundsException","point_index":0}]}]
+
 
   

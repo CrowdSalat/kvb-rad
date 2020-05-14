@@ -12,29 +12,37 @@ public class Tour extends AbstractEntity {
     private String bikeId;
     @Column(name = "distance")
     private double distance;
-    @Column(name="start_longitude")
+    @Column(name = "encoded_waypoints")
+    private String encodedWaypoints;
+    @Column(name = "start_longitude")
     private double startLng;
-    @Column(name="start_latitude")
+    @Column(name = "start_latitude")
     private double startLat;
-    @Column(name="end_longitude")
+    @Column(name = "end_longitude")
     private double endLng;
-    @Column(name="end_latitude")
+    @Column(name = "end_latitude")
     private double endLat;
 
     protected Tour() {
     }
 
-    public Tour(String bikeId, double distance){
+    public Tour(String bikeId, double distance, String encodedWaypoints) {
         this.bikeId = bikeId;
-        this.distance=distance;
+        this.distance = distance;
+        this.encodedWaypoints = encodedWaypoints;
     }
 
-    public Tour(String bikeId, double distance, double startLon, double startLat, double endLng, double endLat){
-        this(bikeId, distance);
+    public Tour(String bikeId, double distance, String encodedWaypoints,
+                double startLon, double startLat, double endLng, double endLat) {
+        this(bikeId, distance, encodedWaypoints);
         this.startLng = startLon;
         this.startLat = startLat;
         this.endLng = endLng;
         this.endLat = endLat;
+    }
+
+    public String getBikeId() {
+        return bikeId;
     }
 
     public double getDistance() {
@@ -71,5 +79,9 @@ public class Tour extends AbstractEntity {
 
     public void setEndLat(double endLat) {
         this.endLat = endLat;
+    }
+
+    public String getEncodedWaypoints() {
+        return encodedWaypoints;
     }
 }
