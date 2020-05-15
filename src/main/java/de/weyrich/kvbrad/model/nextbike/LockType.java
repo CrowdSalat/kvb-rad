@@ -26,7 +26,6 @@ public enum LockType {
         if (value.equals("analog_code_lock")) return ANALOG_CODE_LOCK;
         if (value.equals("scooter_motor_lock")) return SCOOTER_MOTOR_LOCK;
         if (value.equals("frame_lock")) return FRAME_LOCK;
-        if (value.equals("")) return UNDEFINED;
-        throw new IOException("Cannot deserialize LockType with value " + value);
+        return UNDEFINED;
     }
 }
