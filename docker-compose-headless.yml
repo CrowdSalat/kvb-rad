@@ -1,0 +1,33 @@
+version: "3"
+services:
+  kvb-rad:
+    container_name:  kvb-rad-runner
+    image: crowdsalat/kvb-rad:latest
+    restart: always
+    ports:
+      - "127.0.0.1:9090:8080"
+    depends_on:
+      - database
+  database:
+    container_name: kvb-rad-mysql
+    image: mysql:latest
+    restart: always
+    ports:
+      - "127.0.0.1:3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=krautsalat
+      - MYSQL_DATABASE=kvbbike-db
+    volumes:
+      - "kvbrad-db:/var/lib/mysql"
+  routing-api:
+    container_name: kvb-rad-graphhopper
+    image: crowdsalat/graphhopper-cologne-bike:latest
+    restart: always
+    ports:
+      - "127.0.0.1:8989:8989"
+    volumes:
+      - "kvbrad-graphhopper:/data"
+
+volumes:
+  kvbrad-db:
+  kvbrad-graphhopper:
