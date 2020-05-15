@@ -14,6 +14,7 @@ public enum LockType {
         case FORK_LOCK: return "fork_lock";
         case ANALOG_CODE_LOCK: return "analog_code_lock";
         case SCOOTER_MOTOR_LOCK: return "scooter_motor_lock";
+        case FRAME_LOCK: return "frame_lock";
         case UNDEFINED: return  "";
         }
         return null;
