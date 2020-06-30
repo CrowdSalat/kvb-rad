@@ -4,6 +4,7 @@ The application polls the position of the kvb bikes every minute and saves it in
 
 ## commands
 
+- Compile and run with h2 via: `mvn spring-boot:run -Dspring.profiles.active=dryrun`
 - Compile and run via: `mvn spring-boot:run`
 - Compile: `mvn clean package -Dmaven.test.skip=true`
 - Compile and build docker container locally: `mvn clean package -Dmaven.test.skip=true && docker build -t crowdsalat/kvb-rad .`
