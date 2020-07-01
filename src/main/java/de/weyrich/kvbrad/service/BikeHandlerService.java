@@ -46,7 +46,7 @@ public class BikeHandlerService {
         this.saveNewPositions(jpaModel);
     }
 
-    private List<Bike> mapExternalToInternalModel(RootModel rootModel) {
+    public List<Bike> mapExternalToInternalModel(RootModel rootModel) {
         final Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
         List<Bike> bikes = new ArrayList<>();
         for (Place place : places) {
@@ -87,7 +87,7 @@ public class BikeHandlerService {
         cacheLastPosition.putAll(movedBikes);
 
         bikeMovementService.notifyAboutMovements(movedBikes, movedBikesOld);
-        this.logger.info("{} bikes were moved since last update.", movedBikes.size());
+        this.logger.info("{} have different lat and lng (maybe just gps inaccuracy)", movedBikes.size());
     }
 
     private boolean isMoved(Bike bikeCurrent, Bike bikeLast) {
