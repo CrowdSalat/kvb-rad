@@ -1,6 +1,6 @@
 # kvb rad 
 
-The application polls the position of the kvb bikes every minute and saves it in a [mysql](https://www.mysql.com/) database. It uses a selfhosted [graphhopper](https://www.graphhopper.com/) server to  calculate the shortest route between the two positions of a bike if it was moved between two polls. To view the data you can use the web application [kvb-rad-ui](https://github.com/CrowdSalat/kvb-rad-ui).
+The application polls the position of the kvb bikes every minute and saves it in a [managed cockroachdb](https://cockroachlabs.cloud) database. It uses a selfhosted [graphhopper](https://www.graphhopper.com/) server to  calculate the shortest route between the two positions of a bike if it was moved between two polls. To view the data you can use the web application [kvb-rad-ui](https://github.com/CrowdSalat/kvb-rad-ui).
 
 ## commands
 
@@ -11,6 +11,16 @@ The application polls the position of the kvb bikes every minute and saves it in
 - Start application with docker-compose: `docker-compose up -d`
 - Start application with headless docker-compose: `docker-compose --file ./docker-compose-headless.yml up -d`
 - Stop application: `docker-compose down`
+
+
+Start with docker-compose
+```
+// with mysql and ui
+docker-compose -f docker-compose.yml up
+
+// with mysql and without ui
+docker-compose -f docker-compose-headless.yml up
+```
 
 Start application with docker: 
 
