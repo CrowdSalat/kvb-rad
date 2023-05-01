@@ -47,6 +47,7 @@ public class BikeHandlerService {
     }
 
     public List<Bike> mapExternalToInternalModel(RootModel rootModel) {
+        logger.debug("Map internal to external model");
         final Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
         List<Bike> bikes = new ArrayList<>();
         for (Place place : places) {
@@ -63,27 +64,37 @@ public class BikeHandlerService {
     }
 
     private void saveNewPositions(List<Bike> bikes) {
+        logger.debug("Check if bikes have new position. Number of bikes: {}", bikes.size());
+
         Map<String, Bike> movedBikes = new HashMap<>();
         Map<String, Bike> movedBikesOld = new HashMap<>();
 
         for (Bike bike : bikes) {
+            logger.trace("Try to load bike {} from cache", bike.getBikeId());
+
             final String bikeId = bike.getBikeId();
             Bike bikeLast = cacheLastPosition.get(bikeId);
 
             if (bikeLast == null) {
+                logger.trace("Cache miss. Load bike {} to cache", bike.getBikeId());
+
                 final Optional<Bike> optBike = bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
                 optBike.ifPresent(bike1 -> cacheLastPosition.put(bikeId, bike1));
                 bikeLast = cacheLastPosition.get(bikeId);
             }
 
             if (isMoved(bike, bikeLast)) {
+                logger.trace("Bike {} was moved", bike.getBikeId());
+
                 movedBikes.put(bike.getBikeId(), bike);
                 if (bikeLast != null) {
                     movedBikesOld.put(bikeLast.getBikeId(), bikeLast);
                 }
             }
         }
+        logger.trace("Save {} moved bikes to db.", movedBikes.size());
         bikeRepository.saveAll(movedBikes.values());
+        logger.trace("Put {} moved bikes to cache.", movedBikes.size());
         cacheLastPosition.putAll(movedBikes);
 
         bikeMovementService.notifyAboutMovements(movedBikes, movedBikesOld);

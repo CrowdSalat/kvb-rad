@@ -45,6 +45,7 @@ public class BikeMovementService {
     @ActivateProfiler
     @Async
     public void notifyAboutMovements(Map<String, Bike> movedBikes, Map<String, Bike> movedBikesOld) {
+        logger.debug("Create tours for up to {} moved bikes", movedBikesOld.size());
         final Set<String> movedBikesBikeId = movedBikes.keySet();
         for (String movedBikeBikeId : movedBikesBikeId) {
             final Bike bike = movedBikes.get(movedBikeBikeId);
@@ -56,6 +57,8 @@ public class BikeMovementService {
     }
 
     public void handleMovement(Bike bikeNew, Bike bikeOld) {
+        logger.trace("Handle movement for bike {}", bikeNew.getBikeId());
+
         if (bikeNew == null || bikeOld == null) {
             return;
         }
@@ -66,17 +69,18 @@ public class BikeMovementService {
         }
 
         if (this.approximateDistance(bikeNew, bikeOld) < movementThreshold) {
-            logger.trace("Bike was not moved but it was probably a GPS correction.");
+            logger.trace("Bike {} was not moved but it was probably a GPS correction.", bikeNew.getBikeId());
             bikeRepo.delete(bikeOld);
             return;
         }
-
+        logger.trace("Load route from graphhopper for bike {}", bikeNew.getBikeId());
         final Welcome welcome = loadRoute(bikeNew, bikeOld);
         double movedDistance = welcome.getPaths()[0].getDistance();
         String encodedWaypoints = welcome.getPaths()[0].getPoints();
-
         final Tour tour = createTour(bikeNew, bikeOld, movedDistance, encodedWaypoints);
+        logger.trace("Save tour {} of bike {} to db", tour.getId(), tour.getBikeId());
         tourRepo.save(tour);
+        logger.trace("Delete bike from db uuid: {}", tour.getId());
         bikeRepo.delete(bikeOld);
     }
 
