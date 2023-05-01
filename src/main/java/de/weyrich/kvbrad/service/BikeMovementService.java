@@ -80,8 +80,6 @@ public class BikeMovementService {
         final Tour tour = createTour(bikeNew, bikeOld, movedDistance, encodedWaypoints);
         logger.trace("Save tour {} of bike {} to db", tour.getId(), tour.getBikeId());
         tourRepo.save(tour);
-        logger.trace("Delete bike from db uuid: {}", tour.getId());
-        bikeRepo.delete(bikeOld);
     }
 
     /**
