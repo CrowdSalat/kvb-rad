@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,6 +35,19 @@ public class BikeHandlerService {
         this.bikeRepository = bikeRepository;
         this.bikeMovementService = bikeMovementService;
         this.url = url;
+    }
+
+    @ActivateProfiler
+    @PostConstruct
+    public void initCache(){
+        try {
+            for (Bike bike : bikeRepository.findAllByOrderByCreationDateAsc()) {
+                cacheLastPosition.put(bike.getBikeId(), bike);
+            }
+        } catch (Exception e) {
+            logger.error("Could not initiate cache on bean startup with bulk operation. " +
+                    "Now every cache entry need to be filled sequentially which might take long.");
+        }
     }
 
     public RootModel downloadBikeDate() {

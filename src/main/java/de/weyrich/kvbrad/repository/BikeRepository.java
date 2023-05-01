@@ -11,6 +11,8 @@ import java.util.Optional;
 @RestResource(exported = false)
 public interface BikeRepository extends CrudRepository<Bike, String> {
 
+    List<Bike> findAllByOrderByCreationDateAsc();
+
     List<Bike> findByBikeIdOrderByCreationDateDesc(String bikeId);
 
     Optional<Bike> findTopByBikeIdOrderByCreationDateDesc(String bikeId);
