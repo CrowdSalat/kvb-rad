@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,6 +37,19 @@ public class BikeHandlerService {
         this.url = url;
     }
 
+    @ActivateProfiler
+    @PostConstruct
+    public void initCache(){
+        try {
+            for (Bike bike : bikeRepository.findAllByOrderByCreationDateAsc()) {
+                cacheLastPosition.put(bike.getBikeId(), bike);
+            }
+        } catch (Exception e) {
+            logger.error("Could not initiate cache on bean startup with bulk operation. " +
+                    "Now every cache entry need to be filled sequentially which might take long.");
+        }
+    }
+
     public RootModel downloadBikeDate() {
         return this.restTemplate.getForObject(this.url, RootModel.class);
     }
@@ -47,6 +61,7 @@ public class BikeHandlerService {
     }
 
     public List<Bike> mapExternalToInternalModel(RootModel rootModel) {
+        logger.debug("Map internal to external model");
         final Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
         List<Bike> bikes = new ArrayList<>();
         for (Place place : places) {
@@ -63,31 +78,43 @@ public class BikeHandlerService {
     }
 
     private void saveNewPositions(List<Bike> bikes) {
+        logger.debug("Check if bikes have new position. Number of bikes: {}", bikes.size());
+
         Map<String, Bike> movedBikes = new HashMap<>();
         Map<String, Bike> movedBikesOld = new HashMap<>();
 
         for (Bike bike : bikes) {
+            logger.trace("Try to load bike {} from cache", bike.getBikeId());
+
             final String bikeId = bike.getBikeId();
             Bike bikeLast = cacheLastPosition.get(bikeId);
 
             if (bikeLast == null) {
+                logger.trace("Cache miss. Load bike {} to cache", bike.getBikeId());
+
                 final Optional<Bike> optBike = bikeRepository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
                 optBike.ifPresent(bike1 -> cacheLastPosition.put(bikeId, bike1));
                 bikeLast = cacheLastPosition.get(bikeId);
             }
 
             if (isMoved(bike, bikeLast)) {
+                logger.trace("Bike {} was moved", bike.getBikeId());
+
                 movedBikes.put(bike.getBikeId(), bike);
                 if (bikeLast != null) {
                     movedBikesOld.put(bikeLast.getBikeId(), bikeLast);
                 }
             }
         }
-        bikeRepository.saveAll(movedBikes.values());
-        cacheLastPosition.putAll(movedBikes);
 
         bikeMovementService.notifyAboutMovements(movedBikes, movedBikesOld);
-        this.logger.info("{} have different lat and lng (maybe just gps inaccuracy)", movedBikes.size());
+
+        logger.trace("Save {} moved bikes to db.", movedBikes.size());
+        bikeRepository.saveAll(movedBikes.values());
+        logger.trace("Put {} moved bikes to cache.", movedBikes.size());
+        cacheLastPosition.putAll(movedBikes);
+        logger.trace("Remove {} old bike positions from db.", movedBikesOld.size());
+        bikeRepository.deleteAll(movedBikesOld.values());
     }
 
     private boolean isMoved(Bike bikeCurrent, Bike bikeLast) {

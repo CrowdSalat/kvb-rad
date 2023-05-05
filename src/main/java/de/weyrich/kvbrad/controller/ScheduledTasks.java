@@ -22,7 +22,6 @@ public class ScheduledTasks {
         this.bikeHandlerService = bikeHandlerService;
     }
 
-
     @Scheduled(fixedDelay = interval)
     public void scheduleDownloadBikeData() {
         logger.info("download");
