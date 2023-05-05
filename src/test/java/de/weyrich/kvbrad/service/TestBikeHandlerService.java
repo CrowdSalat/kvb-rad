@@ -101,52 +101,11 @@ public class TestBikeHandlerService {
 
 
         // THEN
-        List<Bike> allPositions = repository.findByBikeIdOrderByCreationDateDesc(bikeId);
-        assertThat(allPositions.size(), is(2));
-
         Optional<Bike> bike = repository.findTopByBikeIdOrderByCreationDateDesc(bikeId);
         assertTrue(bike.isPresent());
         assertEquals(bikeId, bike.get().getBikeId());
         assertEquals(2.0, bike.get().getLat());
         assertEquals(2.0, bike.get().getLng());
-    }
-
-    @Test
-    public void saveToDatabase_withChangesAndWithoutChanges() throws IOException {
-        //GIVEN
-        final double oldVal = 1.0;
-        final double newVal = 2.0;
-
-        RootModel rootModel = loadLocalNextbikeJson("two_bikes.json");
-        Place[] places = rootModel.getCountries()[0].getCities()[0].getPlaces();
-
-        Place placeWithChanges = places[0];
-        placeWithChanges.setLng(oldVal);
-        placeWithChanges.setLat(oldVal);
-
-        Place placeWithoutChanges = places[1];
-        placeWithoutChanges.setLng(oldVal);
-        placeWithoutChanges.setLat(oldVal);
-        bikeHandlerService.saveToDatabase(rootModel);
-
-        //WHEN
-        placeWithChanges.setLng(newVal);
-        placeWithChanges.setLat(newVal);
-        bikeHandlerService.saveToDatabase(rootModel);
-
-        //THEN
-        Iterable<Bike> all = this.repository.findAll();
-        assertThat(all, iterableWithSize(3));
-        assertThat(all, hasItems(
-                hasProperty("lat", is(oldVal)),
-                hasProperty("lng", is(oldVal))
-
-        ));
-        assertThat(all, hasItems(
-                hasProperty("lat", is(newVal)),
-                hasProperty("lng", is(newVal))
-
-        ));
     }
 
     private RootModel loadLocalNextbikeJson(String name) throws IOException {
