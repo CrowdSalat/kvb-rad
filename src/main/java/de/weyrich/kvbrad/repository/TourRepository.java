@@ -46,4 +46,7 @@ public interface TourRepository extends CrudRepository<Tour, String> {
     @RestResource(exported = false)
     <S extends Tour> Iterable<S> saveAll(Iterable<S> var1);
 
+    @Override
+    @RestResource(exported = false)
+    Iterable<Tour> findAll();
 }
