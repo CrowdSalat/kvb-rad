@@ -106,15 +106,15 @@ public class BikeHandlerService {
                 }
             }
         }
+
+        bikeMovementService.notifyAboutMovements(movedBikes, movedBikesOld);
+
         logger.trace("Save {} moved bikes to db.", movedBikes.size());
         bikeRepository.saveAll(movedBikes.values());
         logger.trace("Put {} moved bikes to cache.", movedBikes.size());
         cacheLastPosition.putAll(movedBikes);
         logger.trace("Remove {} old bike positions from db.", movedBikesOld.size());
         bikeRepository.deleteAll(movedBikesOld.values());
-
-        bikeMovementService.notifyAboutMovements(movedBikes, movedBikesOld);
-        this.logger.info("{} have different lat and lng (maybe just gps inaccuracy)", movedBikes.size());
     }
 
     private boolean isMoved(Bike bikeCurrent, Bike bikeLast) {
