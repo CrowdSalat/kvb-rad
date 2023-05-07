@@ -18,8 +18,8 @@ public interface TourRepository extends CrudRepository<Tour, String> {
 
     @Query("SELECT t FROM Tour t WHERE t.creationDate  <= :end AND t.creationDate >= :start")
     List<Tour> findToursBetweenDates(
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam("start") @Param("start") Date startDate,
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @RequestParam("end") @Param("end") Date endDate);
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @RequestParam("start") @Param("start") Date startDate,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @RequestParam("end") @Param("end") Date endDate);
 
     // do not export create and delete over rest
     @Override
